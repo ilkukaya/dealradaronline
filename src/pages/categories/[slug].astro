@@ -1,6 +1,6 @@
 ---
 import OfferCollection from '../../components/deals/OfferCollection.astro';
-import { getCategoriesWithContent, getGuides, type CategoryWithContent } from '../../lib/catalog';
+import { getCategoriesWithContent, getGuides, isCategoryIndexable, type CategoryWithContent } from '../../lib/catalog';
 
 export async function getStaticPaths() {
   const cats = await getCategoriesWithContent();
@@ -20,5 +20,6 @@ const guides = category.guides.length ? category.guides : (await getGuides()).sl
   deals={category.deals}
   guides={guides}
   eyebrow="Category"
+  noindex={!isCategoryIndexable(category)}
   siblings={all.map((c) => ({ href: `/categories/${c.slug}/`, label: c.name }))}
 />

@@ -88,7 +88,7 @@ const jsonLd = [
         <p class="text-ink-2 mt-5 max-w-xl text-lg leading-relaxed">
           We track standing discounts, student and military pricing, free trials, and shipping perks from major US stores — and show the restrictions and the date we last checked, every time.
         </p>
-        <form action="/deals/" method="get" role="search" class="mt-7 max-w-xl">
+        <form action="/deals/" method="get" role="search" aria-label="Search deals" class="mt-7 max-w-xl">
           <label for="hero-search" class="sr-only">Search deals and stores</label>
           <div class="border-line-strong focus-within:border-ink shadow-card flex items-center gap-2 rounded-full border bg-white p-1.5 pl-4">
             <Icon name="search" class="text-faint h-5 w-5 shrink-0" />
@@ -301,7 +301,7 @@ const jsonLd = [
               { icon: 'store', title: 'You go to the store', text: 'Every “Go to store” button opens the merchant’s site. Some links may earn us a commission; it never changes your price.' },
             ].map((s, i) => (
               <li class="p-7">
-                <span class="text-faint text-sm font-semibold">0{i + 1}</span>
+                <span class="text-muted text-sm font-semibold">0{i + 1}</span>
                 <Icon name={s.icon} class="text-accent-strong mt-3 h-7 w-7" />
                 <h3 class="text-ink mt-3 font-semibold">{s.title}</h3>
                 <p class="text-ink-2 mt-2 text-[0.95rem] leading-relaxed">{s.text}</p>

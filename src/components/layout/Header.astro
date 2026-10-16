@@ -14,14 +14,14 @@ const nav = [
 const isCurrent = (href: string) => path === href || path.startsWith(href);
 ---
 
-<div class="bg-ink text-[0.8rem] text-white/85">
+<aside aria-label="Affiliate disclosure" class="bg-ink text-[0.8rem] text-white/85">
   <p class="container-page py-2 text-center">
     Independent and reader-supported. We may earn a commission from some links, at no cost to you.{' '}
     <a href="/affiliate-disclosure/" class="font-semibold whitespace-nowrap text-white underline decoration-white/40 underline-offset-2 hover:decoration-white">
       How this works
     </a>
   </p>
-</div>
+</aside>
 
 <header class="border-line sticky top-0 z-40 border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
   <div class="container-page flex h-16 items-center gap-4">
@@ -47,7 +47,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
       </ul>
     </nav>
 
-    <form action="/deals/" method="get" role="search" class="ml-auto hidden w-full max-w-xs lg:block">
+    <form action="/deals/" method="get" role="search" aria-label="Site search" class="ml-auto hidden w-full max-w-xs lg:block">
       <label for="header-search" class="sr-only">Search deals and stores</label>
       <div class="relative">
         <Icon name="search" class="text-faint pointer-events-none absolute top-1/2 left-3.5 h-4.5 w-4.5 -translate-y-1/2" />
@@ -72,7 +72,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
         <Icon name="close" class="hidden h-5 w-5 group-open:block" />
       </summary>
       <div class="border-line shadow-lift absolute inset-x-0 top-full max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-b bg-white px-4 pt-4 pb-8">
-        <form action="/deals/" method="get" role="search" class="mb-5">
+        <form action="/deals/" method="get" role="search" aria-label="Mobile site search" class="mb-5">
           <label for="mobile-search" class="sr-only">Search deals and stores</label>
           <div class="relative">
             <Icon name="search" class="text-faint pointer-events-none absolute top-1/2 left-3.5 h-5 w-5 -translate-y-1/2" />

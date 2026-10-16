@@ -126,7 +126,7 @@
 }
 
 @utility link {
-  @apply text-accent-strong hover:text-accent-deep font-medium underline decoration-1 underline-offset-2;
+  @apply text-accent-deep hover:text-ink font-medium underline decoration-1 underline-offset-2;
 }
 
 @utility field {

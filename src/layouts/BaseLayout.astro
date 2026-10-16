@@ -6,6 +6,8 @@ import Footer from '../components/layout/Footer.astro';
 import Analytics from '../components/integrations/Analytics.astro';
 import LinkMonetization from '../components/integrations/LinkMonetization.astro';
 import { analytics, site } from '../config/site';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import frauncesLatin from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url';
 
 type Props = SeoProps & {
   /** Hide the global header/footer (used by minimal pages). */
@@ -22,6 +24,8 @@ const { bare = false, ...seo } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0e1a35" />
     <meta name="color-scheme" content="light" />
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={frauncesLatin} as="font" type="font/woff2" crossorigin />
     <Seo {...seo} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />

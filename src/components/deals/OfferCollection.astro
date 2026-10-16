@@ -20,13 +20,14 @@ interface Props {
   eyebrow: string;
   showComparison?: boolean;
   siblings?: { href: string; label: string }[];
+  noindex?: boolean;
 }
-const { title, metaTitle, metaDescription, intro, path, crumbs, deals, guides, eyebrow, showComparison = false, siblings = [] } = Astro.props;
+const { title, metaTitle, metaDescription, intro, path, crumbs, deals, guides, eyebrow, showComparison = false, siblings = [], noindex = false } = Astro.props;
 const merchants = await getMerchantMap();
 const m = (id: string) => merchants.get(id)!;
 ---
 
-<BaseLayout title={metaTitle} description={metaDescription} canonicalPath={path}>
+<BaseLayout title={metaTitle} description={metaDescription} canonicalPath={path} noindex={noindex}>
   <div class="border-line border-b bg-white">
     <div class="container-page py-8 sm:py-10">
       <Breadcrumbs items={crumbs} />

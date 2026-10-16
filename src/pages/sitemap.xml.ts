@@ -8,6 +8,7 @@ import {
   getGuides,
   getOfferTypesWithContent,
   getPublishedMerchants,
+  isCategoryIndexable,
   isDealIndexable,
   isStoreIndexable,
 } from '../lib/catalog';
@@ -50,7 +51,7 @@ export async function GET(_context: APIContext) {
     ...merchants
       .filter((m) => isStoreIndexable(m, active.filter((d) => d.data.merchant === m.id).length))
       .map((m) => ({ loc: `/stores/${m.id}/` })),
-    ...cats.map((c) => ({ loc: `/categories/${c.slug}/` })),
+    ...cats.filter(isCategoryIndexable).map((c) => ({ loc: `/categories/${c.slug}/` })),
     ...programs.map((p) => ({ loc: `/discounts/${p.slug}/` })),
     ...guides.map((g) => ({ loc: `/guides/${g.id}/`, lastmod: g.data.updatedAt ?? g.data.publishedAt })),
   ];

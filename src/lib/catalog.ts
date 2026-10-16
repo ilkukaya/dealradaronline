@@ -79,7 +79,16 @@ export function isStoreIndexable(m: Merchant, activeOfferCount: number): boolean
 
 export type CategoryWithContent = (typeof categories)[number] & { deals: Deal[]; guides: Guide[] };
 
-/** Only categories with at least one active offer get a page. */
+/**
+ * Categories with at least one active offer get a page (so breadcrumbs work);
+ * pages with fewer than MIN_OFFERS_FOR_INDEX are noindexed as thin.
+ */
+export const MIN_OFFERS_FOR_INDEX = 2;
+
+export function isCategoryIndexable(c: CategoryWithContent): boolean {
+  return c.deals.length >= MIN_OFFERS_FOR_INDEX;
+}
+
 export async function getCategoriesWithContent(): Promise<CategoryWithContent[]> {
   const [deals, guides] = await Promise.all([getActiveDeals(), getGuides()]);
   return categories
