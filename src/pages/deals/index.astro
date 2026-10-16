@@ -100,7 +100,7 @@ const PAGE_SIZE = 24;
                   <li>
                     <label class="hover:bg-shell flex cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1 text-[0.92rem]">
                       <input type="checkbox" name="store" value={s.id} class="accent-accent-strong h-4 w-4 rounded" />
-                      <Monogram name={s.data.name} size="xs" />
+                      <Monogram name={s.data.name} id={s.id} size="xs" />
                       <span class="text-ink flex-1">{s.data.name}</span>
                       <span class="text-muted text-xs">{count((d) => d.data.merchant === s.id)}</span>
                     </label>

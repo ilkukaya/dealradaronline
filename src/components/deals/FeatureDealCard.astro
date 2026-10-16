@@ -22,7 +22,7 @@ const host = new URL(link.href).host.replace(/^www\./, '');
 
 <article class="card card-hover relative flex flex-col p-6 sm:p-7" data-expires={d.endDate?.toISOString()} data-expire-action="hide">
   <div class="flex items-start gap-3">
-    <Monogram name={merchant.data.name} />
+    <Monogram name={merchant.data.name} id={merchant.id} />
     <div class="min-w-0 flex-1">
       <p class="text-ink font-semibold">{merchant.data.name}</p>
       <p class:list={['flex items-center gap-1 text-sm', style.text]}>

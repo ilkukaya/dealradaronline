@@ -135,7 +135,7 @@ const jsonLd = [
             <ul class="relative z-10 my-auto flex flex-col gap-3">
               {blips.map((d, i) => (
                 <li class:list={['shadow-lift flex max-w-[92%] items-center gap-2.5 rounded-xl bg-white/95 p-2.5 backdrop-blur-sm', i === 0 ? 'self-start' : i === 1 ? 'self-end' : 'self-center']}>
-                  <Monogram name={m(d.data.merchant).data.name} size="xs" />
+                  <Monogram name={m(d.data.merchant).data.name} id={d.data.merchant} size="xs" />
                   <a href={`/deals/${d.id}/`} class="min-w-0 no-underline">
                     <span class="text-ink tabular block truncate text-[0.82rem] font-bold">
                       {getHeadline(d.data).value} · {m(d.data.merchant).data.name}
@@ -155,6 +155,25 @@ const jsonLd = [
       )
     }
   </section>
+
+  <!-- Store logo strip -->
+  {
+    storeRows.length > 0 && (
+      <section class="container-page pb-8" aria-labelledby="logo-strip">
+        <h2 id="logo-strip" class="text-faint text-center text-[0.7rem] font-bold tracking-[0.12em] uppercase">Offers checked at</h2>
+        <ul class="mt-4 flex flex-wrap justify-center gap-2 sm:gap-3">
+          {storeRows.map((s) => (
+            <li>
+              <a href={`/stores/${s.merchant.id}/`} class="hover:shadow-lift flex items-center gap-2.5 rounded-full bg-white p-1.5 no-underline shadow-[0_1px_3px_rgba(14,26,53,0.08)] transition-shadow sm:pr-4" aria-label={`${s.merchant.data.name} deals`}>
+                <Monogram name={s.merchant.data.name} id={s.merchant.id} size="sm" />
+                <span class="text-ink hidden text-sm font-semibold sm:inline">{s.merchant.data.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 
   <!-- Trust strip -->
   <section class="bg-shell" aria-label="How we work">
@@ -305,7 +324,7 @@ const jsonLd = [
           {storeRows.map((s) => (
             <li>
               <a href={`/stores/${s.merchant.id}/`} class="card card-hover flex h-full flex-col items-center px-3 py-5 text-center no-underline">
-                <Monogram name={s.merchant.data.name} />
+                <Monogram name={s.merchant.data.name} id={s.merchant.id} />
                 <span class="text-ink mt-3 text-sm font-semibold">{s.merchant.data.name}</span>
                 <span class="text-muted text-xs">{s.count} active {s.count === 1 ? 'offer' : 'offers'}</span>
               </a>

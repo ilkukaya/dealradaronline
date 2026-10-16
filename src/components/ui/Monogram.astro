@@ -1,16 +1,22 @@
 ---
 /**
- * Non-photographic store mark: initials on a soft tile. We don't use store logos
- * because we don't have permission to reproduce them.
+ * Store mark: the store's logo on a brand-colored tile (inline SVG from
+ * src/lib/brand-logos.ts, so no extra requests). Stores without a logo entry
+ * fall back to initials on a soft tile.
  */
+import { brandLogos } from '../../lib/brand-logos';
+
 interface Props {
   name: string;
+  /** Merchant id; defaults to the slugified name ("The Home Depot" → home-depot). */
+  id?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg';
-  /** "soft" tinted tile (default) or "solid" navy tile. */
+  /** Fallback only: "soft" tinted tile (default) or "solid" navy tile. */
   tone?: 'soft' | 'solid';
 }
-const { name, size = 'md', tone = 'soft' } = Astro.props;
+const { name, id, size = 'md', tone = 'soft' } = Astro.props;
 const clean = name.replace(/^The\s+/i, '').replace(/[^A-Za-z0-9 ]/g, '');
+const logo = brandLogos[id ?? clean.toLowerCase().replace(/\s+/g, '-')];
 const parts = clean.split(/\s+/).filter(Boolean);
 const capitals = clean.replace(/[^A-Z]/g, '');
 // "Best Buy" → BB, "GitHub" → GH, "YouTube" → YT, "Nike" → NI
@@ -33,4 +39,14 @@ const sizes = {
 };
 ---
 
-<span class:list={['display inline-flex shrink-0 items-center justify-center font-semibold', sizes[size], palette]} aria-hidden="true">{initials}</span>
+{
+  logo ? (
+    <span class:list={['inline-flex shrink-0 items-center justify-center shadow-[0_1px_2px_rgba(14,26,53,0.12)]', sizes[size], logo.ring && 'ring-line ring-1 ring-inset']} style={`background:${logo.bg}`} aria-hidden="true">
+      <svg viewBox={logo.viewBox} style={`width:${logo.fill ?? 64}%;height:${logo.fill ?? 64}%`} focusable="false" set:html={logo.body} />
+    </span>
+  ) : (
+    <span class:list={['display inline-flex shrink-0 items-center justify-center font-semibold', sizes[size], palette]} aria-hidden="true">
+      {initials}
+    </span>
+  )
+}

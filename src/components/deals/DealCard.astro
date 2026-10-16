@@ -40,7 +40,7 @@ const finePrint = d.restrictions[0];
   data-expire-action="hide"
 >
   <div class="flex items-start gap-3">
-    <Monogram name={merchant.data.name} size="sm" />
+    <Monogram name={merchant.data.name} id={merchant.id} size="sm" />
     <div class="min-w-0 flex-1">
       <p class="text-ink truncate text-[0.95rem] font-semibold">{merchant.data.name}</p>
       <p class="text-muted truncate text-xs">{category?.name}</p>

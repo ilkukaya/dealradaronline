@@ -20,7 +20,7 @@ const headline = getHeadline(d);
 ---
 
 <article class="card card-hover relative flex gap-4 p-5" data-row-type={d.offerType} data-expires={d.endDate?.toISOString()} data-expire-action="hide">
-  <Monogram name={merchant.data.name} size="sm" />
+  <Monogram name={merchant.data.name} id={merchant.id} size="sm" />
   <div class="flex min-w-0 flex-1 flex-col">
     <p class="flex flex-wrap items-center gap-2 text-xs">
       <span class="text-ink font-semibold">{merchant.data.name}</span>
