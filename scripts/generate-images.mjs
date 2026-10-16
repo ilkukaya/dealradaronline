@@ -17,6 +17,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 import sharp from 'sharp';
+import { brandLogos } from '../src/lib/brand-logos.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const pub = join(root, 'public');
@@ -52,7 +53,7 @@ body{font-family:Inter;-webkit-font-smoothing:antialiased}
 .radar{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.12)}
 `;
 
-function socialCard({ eyebrow, title, footer }) {
+function socialCard({ eyebrow, title, footer, logo }) {
   const size = title.length > 70 ? 54 : title.length > 45 ? 62 : 72;
   return `<!doctype html><html><head><style>${baseCss}
   body{width:1200px;height:630px;background:#0e1a35;position:relative;overflow:hidden;color:#fff}
@@ -62,7 +63,8 @@ function socialCard({ eyebrow, title, footer }) {
   <div class="radar" style="width:300px;height:300px;right:-30px;top:0px"></div>
   <svg style="position:absolute;right:-330px;top:-300px" width="900" height="900" viewBox="0 0 200 200"><path d="M100 100 L100 0 A100 100 0 0 1 186.6 50 Z" fill="#f0603c" opacity=".22"/></svg>
   <div style="position:absolute;left:72px;top:64px;display:flex;align-items:center;gap:16px;font-size:34px">${mark(52, '#ffffff')}<span>${wordmark('#ffffff', '#fbd5c7')}</span></div>
-  <div style="position:absolute;left:72px;right:200px;top:190px">
+  ${logo ? `<div style="position:absolute;right:64px;top:196px;width:144px;height:144px;border-radius:32px;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(0,0,0,.25)"><svg viewBox="${logo.viewBox}" style="width:${logo.fill}%;height:${logo.fill}%" preserveAspectRatio="xMidYMid ${logo.fill < 100 ? 'meet' : 'slice'}">${logo.body}</svg></div>` : ''}
+  <div style="position:absolute;left:72px;right:${logo ? 260 : 200}px;top:190px">
     <div style="font-size:22px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#f8a58c">${esc(eyebrow)}</div>
     <div style="font-family:Display;font-weight:600;font-size:${size}px;line-height:1.08;margin-top:18px;letter-spacing:-0.015em">${esc(title)}</div>
   </div>
@@ -139,6 +141,7 @@ await shot(iconHtml(512, 40), 512, 512, join(pub, 'icon-512.png'));
 // Social cards
 await shot(socialCard({ eyebrow: 'Independent US deal discovery', title: 'Real savings, with the fine print up front.', footer: `${tagline}  ·  ${domain}` }), 1200, 630, join(pub, 'og/default.png'));
 
+const merchants = new Map(readCollection('merchants', ['.yaml', '.yml']).map(({ id, raw }) => [id, parseYaml(raw)]));
 let n = 0;
 for (const { id, raw } of readCollection('guides', ['.md'])) {
   const fm = frontmatter(raw);
@@ -150,7 +153,8 @@ for (const { id, raw } of readCollection('guides', ['.md'])) {
 for (const { id, raw } of readCollection('deals', ['.yaml', '.yml'])) {
   const d = parseYaml(raw);
   if (d.fixture || d.status !== 'published') continue;
-  await shot(socialCard({ eyebrow: 'Offer', title: d.title, footer: `Restrictions and last-checked date on ${domain}` }), 1200, 630, join(pub, `og/deals/${id}.png`));
+  const store = merchants.get(d.merchant);
+  await shot(socialCard({ eyebrow: store ? `${store.name} offer` : 'Offer', title: d.title, footer: `Restrictions and last-checked date on ${domain}`, logo: brandLogos[d.merchant] }), 1200, 630, join(pub, `og/deals/${id}.png`));
   n++;
 }
 

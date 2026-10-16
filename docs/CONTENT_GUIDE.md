@@ -85,7 +85,7 @@ affiliatePrograms:
 
 When a program is `approved`, the store page and affiliate disclosure update automatically to say links may earn a commission.
 
-**Store logo.** Logos live in `src/lib/brand-logos.ts`, keyed by the merchant slug: a `viewBox`, the brand background color, and the SVG paths (inline, so they add no requests). Single-color marks for many brands are available from [Simple Icons](https://simpleicons.org/) (CC0); if the store's affiliate program supplies official logo files, use those instead. A store without an entry shows its initials until you add one. Logos are only used to identify the store — never in a way that suggests the store endorses us.
+**Store logo.** Logos live in `src/lib/brand-logos.ts`, keyed by the merchant slug: a `viewBox`, the SVG markup (inlined, so it adds no requests), how much of the tile it fills, and which open logo set it came from. Take the artwork unmodified from a published set — [theSVG](https://github.com/glincker/thesvg) (MIT), [SVG Logos](https://github.com/gilbarbara/logos) (CC0) or [selfh.st/icons](https://github.com/selfhst/icons) (CC BY 4.0; all are bundled in the `@iconify/json` npm package) — and add the set to `logoSources` if it's new so the terms page credits it. If the store's affiliate program supplies official logo files, use those instead. A store without an entry shows its initials until you add one. Logos are only used to identify the store — never in a way that suggests the store endorses us.
 
 ## Add a guide
 

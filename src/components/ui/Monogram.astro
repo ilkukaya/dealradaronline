@@ -1,6 +1,6 @@
 ---
 /**
- * Store mark: the store's logo on a brand-colored tile (inline SVG from
+ * Store mark: the store's logo on a white tile (inline SVG from
  * src/lib/brand-logos.ts, so no extra requests). Stores without a logo entry
  * fall back to initials on a soft tile.
  */
@@ -41,8 +41,8 @@ const sizes = {
 
 {
   logo ? (
-    <span class:list={['inline-flex shrink-0 items-center justify-center shadow-[0_1px_2px_rgba(14,26,53,0.12)]', sizes[size], logo.ring && 'ring-line ring-1 ring-inset']} style={`background:${logo.bg}`} aria-hidden="true">
-      <svg viewBox={logo.viewBox} style={`width:${logo.fill ?? 64}%;height:${logo.fill ?? 64}%`} focusable="false" set:html={logo.body} />
+    <span class:list={['inline-flex shrink-0 items-center justify-center overflow-hidden bg-white shadow-[0_1px_2px_rgba(14,26,53,0.1)]', sizes[size], logo.fill < 100 && 'ring-line ring-1 ring-inset']} aria-hidden="true">
+      <svg viewBox={logo.viewBox} style={`width:${logo.fill}%;height:${logo.fill}%`} preserveAspectRatio={logo.fill < 100 ? 'xMidYMid meet' : 'xMidYMid slice'} focusable="false" set:html={logo.body} />
     </span>
   ) : (
     <span class:list={['display inline-flex shrink-0 items-center justify-center font-semibold', sizes[size], palette]} aria-hidden="true">

@@ -2,6 +2,7 @@
 import PageLayout from '../layouts/PageLayout.astro';
 import { POLICY_DATES } from '../config/policies';
 import { operatorName, owner, site } from '../config/site';
+import { logoSources } from '../lib/brand-logos';
 ---
 
 <PageLayout
@@ -44,7 +45,15 @@ import { operatorName, owner, site } from '../config/site';
 
   <h2>Content ownership</h2>
   <p>
-    The text, design, and graphics we create are our property or used with permission. Store names, product names, and trademarks belong to their owners and are used only to identify them; their use doesn't imply endorsement. You may share links to our pages and quote brief excerpts with attribution.
+    The text, design, and graphics we create are our property or used with permission. Store names, product names, logos, and trademarks belong to their owners and are used only to identify them; their use doesn't imply endorsement. You may share links to our pages and quote brief excerpts with attribution.
+  </p>
+  <p>
+    Store logo artwork comes from open logo collections:
+    {Object.values(logoSources).map((src, i, all) => (
+      <>
+        <a href={src.url} rel="noopener">{src.name}</a> ({src.license}){i < all.length - 1 ? ', ' : '.'}
+      </>
+    ))}
   </p>
 
   <h2>Messages you send us</h2>
