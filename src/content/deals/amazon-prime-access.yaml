@@ -1,0 +1,28 @@
+title: "Amazon Prime Access: Prime for $6.99/month with government assistance"
+merchant: amazon
+category: memberships
+offerType: assistance
+description: People who receive qualifying government assistance, or who meet Amazon's household income test, can get Prime for $6.99 a month after a 30-day free trial.
+editorialSummary: |-
+  Prime Access is Amazon's reduced-price membership for people enrolled in programs such as SNAP/EBT, Medicaid, SSI, WIC, or TANF. It includes the same core Prime benefits as the standard plan at less than half the monthly price.
+
+  Eligibility is checked by a third-party verification partner, and you will need to verify again every 12 months to keep the lower price. Note that EBT cards cannot be used to pay the membership fee itself.
+eligibility: Recipients of qualifying government assistance (for example SNAP/EBT, Medicaid, SSI, WIC, TANF, LIHEAP, NSLP), or households that meet Amazon's income guideline.
+restrictions:
+  - Eligibility is verified by a third-party partner using documents or income information.
+  - You must re-verify eligibility every 12 months.
+  - New Prime members start with a 30-day free trial before the $6.99 monthly charge.
+  - EBT cards cannot be used to pay the Prime membership fee.
+price: 6.99
+pricePeriod: month
+priceNote: after the 30-day trial
+referencePrice: 14.99
+referencePriceNote: Standard Prime monthly price, as stated by Amazon
+merchantUrl: https://www.amazon.com/amazonprime?primeCampaignId=accessWlpPrimeRedir
+sourceUrl: https://www.amazon.com/amazonprime?primeCampaignId=accessWlpPrimeRedir
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+editorsPick: true
+tags: [prime, snap, ebt, medicaid]

@@ -1,0 +1,35 @@
+---
+/** Plain share links — no third-party scripts, no tracking pixels. */
+import Icon from './Icon.astro';
+import { absoluteUrl } from '../../config/site';
+
+interface Props {
+  path: string;
+  title: string;
+  /** Pinterest image (root-relative). Falls back to the page's social image. */
+  pinImage?: string;
+}
+const { path, title, pinImage = '/og/default.png' } = Astro.props;
+const url = absoluteUrl(path);
+const e = encodeURIComponent;
+const links = [
+  { name: 'Pinterest', href: `https://www.pinterest.com/pin/create/button/?url=${e(url)}&media=${e(absoluteUrl(pinImage))}&description=${e(title)}` },
+  { name: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${e(url)}` },
+  { name: 'X', href: `https://x.com/intent/post?url=${e(url)}&text=${e(title)}` },
+  { name: 'Email', href: `mailto:?subject=${e(title)}&body=${e(url)}` },
+];
+---
+
+<div class="flex flex-wrap items-center gap-2 text-sm">
+  <span class="text-muted mr-1">Share:</span>
+  {
+    links.map((l) => (
+      <a href={l.href} target={l.name === 'Email' ? undefined : '_blank'} rel="noopener nofollow" class="chip !min-h-8 !px-3 !text-xs" data-track="Share" data-track-props={JSON.stringify({ network: l.name, page: path })}>
+        {l.name}
+      </a>
+    ))
+  }
+  <button type="button" class="chip !min-h-8 !px-3 !text-xs" data-copy={url}>
+    <Icon name="copy" class="h-3.5 w-3.5" /><span data-copy-label>Copy link</span>
+  </button>
+</div>

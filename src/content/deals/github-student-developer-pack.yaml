@@ -1,0 +1,23 @@
+title: "GitHub Student Developer Pack: free developer tools for verified students"
+merchant: github
+category: software-digital
+offerType: student
+description: Students aged 13 and older in a degree- or diploma-granting program can claim a free bundle of developer tools and partner offers from GitHub Education.
+editorialSummary: |-
+  If you are learning to code, the Student Developer Pack is worth claiming before almost anything else on this list: it costs nothing and bundles offers from GitHub and many partner companies, from cloud credits to domain names and learning platforms.
+
+  The pack's contents change over time and each partner sets its own terms — some offers expire or need renewal. Activate only the offers you plan to use, and note their end dates.
+eligibility: Students aged 13+ enrolled in a degree- or diploma-granting course of study.
+restrictions:
+  - Verification uses a school-issued email or dated proof of enrollment.
+  - Teachers and staff are not eligible for the Student Developer Pack.
+  - Partner offers change over time, and some require annual renewal.
+price: 0
+merchantUrl: https://education.github.com/pack
+sourceUrl: https://education.github.com/pack
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+editorsPick: true
+tags: [developer tools, coding, students]

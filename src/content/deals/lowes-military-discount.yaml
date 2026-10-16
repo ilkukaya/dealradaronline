@@ -1,0 +1,24 @@
+title: "Lowe's military discount: 10% off eligible purchases plus a rewards upgrade"
+merchant: lowes
+category: home-kitchen
+offerType: military
+description: Current service members, veterans, and their spouses get 10% off eligible purchases and a free upgrade to MyLowe's Rewards Silver status after verifying with ID.me.
+editorialSummary: |-
+  Lowe's pairs its everyday military discount with an automatic upgrade in its free rewards program, which brings perks such as free standard shipping. That makes it particularly useful for online orders.
+
+  The exclusions list is long: sale items, major appliances, commodities like lumber and wire, services, and gift cards are all left out. Compare the discount against any current sale price, because the two cannot be combined.
+eligibility: Current members and veterans of the US Army, Marine Corps, Navy, Air Force, Coast Guard, Space Force, NOAA, USPHS Commissioned Corps, or National Guard, plus spouses with their own account.
+restrictions:
+  - Requires ID.me verification linked to a Lowes.com account.
+  - Not valid on sale items or with other discounts.
+  - Excludes previous purchases, services, major appliances and related parts, commodities (such as lumber, plywood, and wire), and gift cards.
+  - For personal use only. Lowe's may change or end the program at any time.
+statedPercentOff: 10
+merchantUrl: https://www.lowes.com/l/about/honor-our-military
+sourceUrl: https://www.lowes.com/l/about/honor-our-military
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+editorsPick: true
+tags: [military, veterans, home improvement]

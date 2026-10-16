@@ -1,0 +1,24 @@
+---
+import OfferCollection from '../../components/deals/OfferCollection.astro';
+import { getCategoriesWithContent, getGuides, type CategoryWithContent } from '../../lib/catalog';
+
+export async function getStaticPaths() {
+  const cats = await getCategoriesWithContent();
+  return cats.map((category) => ({ params: { slug: category.slug }, props: { category, all: cats } }));
+}
+const { category, all } = Astro.props as { category: CategoryWithContent; all: CategoryWithContent[] };
+const guides = category.guides.length ? category.guides : (await getGuides()).slice(0, 3);
+---
+
+<OfferCollection
+  title={category.name}
+  metaTitle={`${category.name} Deals & Discounts`}
+  metaDescription={`${category.description} ${category.deals.length} active ${category.deals.length === 1 ? 'offer' : 'offers'}, each with restrictions and a last-checked date.`.slice(0, 160)}
+  intro={category.description}
+  path={`/categories/${category.slug}/`}
+  crumbs={[{ name: 'Categories', href: '/categories/' }, { name: category.name, href: `/categories/${category.slug}/` }]}
+  deals={category.deals}
+  guides={guides}
+  eyebrow="Category"
+  siblings={all.map((c) => ({ href: `/categories/${c.slug}/`, label: c.name }))}
+/>

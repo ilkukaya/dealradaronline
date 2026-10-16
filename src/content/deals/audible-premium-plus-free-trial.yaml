@@ -1,0 +1,24 @@
+title: "Audible Premium Plus: 30-day free trial, then $14.95/month"
+merchant: audible
+category: software-digital
+offerType: trial
+description: New Audible members can try Premium Plus free for 30 days, including a credit for an audiobook to keep. The plan then renews at $14.95 a month.
+editorialSummary: |-
+  Audible's trial is a straightforward way to get one audiobook free: use the trial credit on a long or expensive title, and decide before day 30 whether you will listen enough to justify a monthly credit.
+
+  The trial renews into a paid plan automatically. Audible's own trial page notes that Prime members may receive extra credits during the trial, so check the offer shown on your account before starting.
+eligibility: New Audible members.
+restrictions:
+  - The trial includes one credit; Audible advertises two credits for Amazon Prime members on its Prime trial page.
+  - Renews automatically at $14.95/month unless you cancel before the trial ends.
+  - Audible sometimes labels the plan "Premium" rather than "Premium Plus".
+price: 14.95
+pricePeriod: month
+priceNote: after the 30-day trial
+merchantUrl: https://www.audible.com/ep/memberbenefits
+sourceUrl: https://www.audible.com/ep/memberbenefits
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+tags: [audiobooks, free trial]

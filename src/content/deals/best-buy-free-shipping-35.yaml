@@ -1,0 +1,23 @@
+title: "Best Buy free shipping on $35+ orders — no minimum for My Best Buy members"
+merchant: best-buy
+category: electronics-tech
+offerType: shipping
+description: Standard shipping at Best Buy is free on orders of $35 and up, and free My Best Buy members get free standard shipping with no minimum.
+editorialSummary: |-
+  The simplest saving at Best Buy is to sign in before you check out: the free My Best Buy membership removes the shipping minimum entirely, so a small accessory order ships free too.
+
+  The threshold is measured after coupons and before tax, and it does not apply to Marketplace items sold by third parties. Large items such as major appliances and big-screen TVs have their own delivery terms.
+eligibility: All Best Buy shoppers on qualifying orders; free My Best Buy members have no minimum.
+restrictions:
+  - The $35 threshold is measured after coupons and before taxes.
+  - Digital downloads, e-gift cards, and special orders don't count toward the threshold.
+  - Not available on Marketplace products regardless of order total or membership.
+  - Major appliances, TVs 51 inches and larger, and scheduled-delivery items have different delivery terms.
+merchantUrl: https://www.bestbuy.com/
+sourceUrl: https://www.bestbuy.com/site/help-topics/free-shipping/pcmcat276800050002.c?id=pcmcat276800050002
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+editorsPick: true
+tags: [free shipping, electronics]

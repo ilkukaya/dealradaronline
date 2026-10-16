@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+import Seo, { type SeoProps } from '../components/seo/Seo.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Analytics from '../components/integrations/Analytics.astro';
+import LinkMonetization from '../components/integrations/LinkMonetization.astro';
+import { analytics, site } from '../config/site';
+
+type Props = SeoProps & {
+  /** Hide the global header/footer (used by minimal pages). */
+  bare?: boolean;
+};
+
+const { bare = false, ...seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0e1a35" />
+    <meta name="color-scheme" content="light" />
+    <Seo {...seo} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} — new deals and guides`} href="/rss.xml" />
+    <meta name="generator" content={Astro.generator} />
+    <Analytics />
+    <LinkMonetization />
+    <slot name="head" />
+  </head>
+  <body data-click-endpoint={analytics.clickEndpoint} class="flex min-h-dvh flex-col">
+    <a href="#main" class="focus:bg-ink sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2 focus:text-white">
+      Skip to content
+    </a>
+    {!bare && <Header />}
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    {!bare && <Footer />}
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

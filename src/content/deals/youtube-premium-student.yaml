@@ -1,0 +1,24 @@
+title: "YouTube Premium Student: $8.99/month with a 1-month trial"
+merchant: youtube
+category: software-digital
+offerType: student
+description: Verified students at eligible colleges and universities can get YouTube Premium, including YouTube Music Premium, for $8.99 a month after a one-month trial.
+editorialSummary: |-
+  YouTube Premium removes ads, adds downloads and background play, and includes YouTube Music Premium. The student plan is the lowest-priced way to get all of that if you are enrolled at an eligible school.
+
+  Verification is annual and the student rate is limited to four years. If you already pay for YouTube Premium, you need to cancel your current plan before switching, so time it with the end of your billing period.
+eligibility: Students at higher-education institutions approved by YouTube's verification partner (SheerID).
+restrictions:
+  - The trial is for eligible new members only, generally one per payment method.
+  - Annual re-verification is required; the student plan is available for up to four years.
+  - Existing paid YouTube members must cancel before switching to the student plan.
+price: 8.99
+pricePeriod: month
+priceNote: after the 1-month trial
+merchantUrl: https://www.youtube.com/premium/student
+sourceUrl: https://www.youtube.com/premium
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+tags: [video, streaming, music, students]

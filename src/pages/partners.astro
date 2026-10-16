@@ -1,0 +1,41 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { site } from '../config/site';
+import { getActiveDeals, getPublishedMerchants, getGuides } from '../lib/catalog';
+const [deals, merchants, guides] = await Promise.all([getActiveDeals(), getPublishedMerchants(), getGuides()]);
+---
+
+<PageLayout
+  title="Work With Us"
+  description={`For retailers, brands, and affiliate managers: how ${site.name} covers offers, what we need from you, and how sponsored content would be labeled.`}
+  dek="For retailers, brands, and affiliate program managers."
+  path="/partners/"
+>
+  <h2>About our audience and coverage</h2>
+  <p>
+    {site.name} is a new, independent deal discovery site for US shoppers. We focus on standing savings programs — student, military, and assistance pricing, free trials, and shipping perks — alongside time-limited sales and promo codes we can confirm. We currently cover {merchants.length} stores and services with {deals.length} active offers and {guides.length} shopping guides. We don't publish audience numbers we can't support; ask us and we'll share current figures.
+  </p>
+
+  <h2>Affiliate programs</h2>
+  <p>
+    We're building affiliate partnerships so we can keep the site free. If you manage an affiliate program — directly or on a network such as CJ, Awin, FlexOffers, impact.com, Rakuten Advertising, Skimlinks, or Sovrn Commerce — <a href="/contact/?topic=partnership">contact us</a> with the program name and network. Helpful details:
+  </p>
+  <ul>
+    <li>Current public offers, promo codes, and their exact terms and end dates.</li>
+    <li>Any rules for publishers (coupon policy, trademark bidding, link formats).</li>
+    <li>Whether you provide an offer or product feed we're licensed to use.</li>
+  </ul>
+  <p>
+    Joining a program doesn't buy coverage. We list offers that are useful to readers and describe them accurately, including their restrictions, whether or not they pay a commission.
+  </p>
+
+  <h2>Corrections from stores</h2>
+  <p>
+    If an offer or policy summary about your store is out of date, tell us through the <a href="/contact/?topic=deal-problem">contact form</a> with a link to the current official terms. We'll recheck and update it.
+  </p>
+
+  <h2>Sponsored content and advertising</h2>
+  <p>
+    We don't currently sell sponsored placements or display advertising. If we do in the future, sponsored content will be labeled “Sponsored,” ads will be labeled “Advertisement,” and neither will be presented as an editorial recommendation.
+  </p>
+</PageLayout>

@@ -1,0 +1,44 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { owner, site } from '../config/site';
+import { getActiveDeals, getGuides, getPublishedMerchants } from '../lib/catalog';
+
+const [deals, merchants, guides] = await Promise.all([getActiveDeals(), getPublishedMerchants(), getGuides()]);
+---
+
+<PageLayout
+  title={`About ${site.name}`}
+  description={`${site.name} is an independent deal discovery site for US shoppers. Learn what we cover, how we choose offers, and how the site is funded.`}
+  dek="An independent deal discovery site for US shoppers that puts the fine print next to the price."
+  path="/about/"
+>
+  <p>
+    {site.name} helps people in the United States find savings that are real, current, and worth their time. We focus on offers we can confirm on a store's own website — standing discounts for students and military families, reduced-price memberships, free trials, free-shipping thresholds, and promo codes — and we write down who qualifies and what the catch is.
+  </p>
+  <p>
+    Right now the site tracks {deals.length} active {deals.length === 1 ? 'offer' : 'offers'} across {merchants.length} stores and services, and publishes {guides.length} in-depth shopping guides. We would rather list a small number of offers we can stand behind than thousands we can't.
+  </p>
+
+  <h2>What makes us different</h2>
+  <ul>
+    <li><strong>The restrictions come first.</strong> Every offer page lists eligibility, exclusions, renewal terms, and the date we last checked it.</li>
+    <li><strong>No fake urgency.</strong> We don't use countdown timers, "only 2 left" banners, or invented "was" prices.</li>
+    <li><strong>Sources you can check.</strong> Each offer and store policy links to the store page we confirmed it on.</li>
+    <li><strong>Expired means expired.</strong> Offers with an end date drop out of listings automatically, and pages for ended offers say so plainly.</li>
+  </ul>
+
+  <h2>How the site is funded</h2>
+  <p>
+    {site.name} is free to use. We plan to support the site through affiliate commissions: when you buy through some links, the store may pay us a small commission at no extra cost to you. Each offer page says whether its link is an affiliate link. Commissions never decide whether an offer is listed or how it's described. Read our <a href="/affiliate-disclosure/">affiliate disclosure</a> for details.
+  </p>
+
+  <h2>Who runs {site.name}</h2>
+  <p>
+    {site.name} is an independent publication{owner.legalName ? `, operated by ${owner.legalName}` : ''}. It is not owned by, affiliated with, or endorsed by any retailer or brand we cover. The name "{site.name}" is used descriptively; we don't claim exclusive rights to the words "deal" or "radar," and we aren't connected with other businesses that use similar names.
+  </p>
+
+  <h2>Get in touch</h2>
+  <p>
+    Spotted an offer that's changed, have a question, or represent a store? <a href="/contact/">Contact us</a>. Brands and affiliate managers can also see <a href="/partners/">Work with us</a>.
+  </p>
+</PageLayout>

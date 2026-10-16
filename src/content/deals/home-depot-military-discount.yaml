@@ -1,0 +1,23 @@
+title: "The Home Depot military discount: 10% off eligible purchases"
+merchant: home-depot
+category: home-kitchen
+offerType: military
+description: Active-duty service members, veterans, retirees, eligible dependents, and spouses get 10% off eligible purchases in store and online after verifying their status.
+editorialSummary: |-
+  Home Depot's military discount is available every day, not just around Veterans Day, and works both in stores and online once you verify. It is most useful on full-price tools, materials, and home goods.
+
+  Verification runs through a third-party service. In store, you show the virtual ID in the Home Depot app; online, you sign in to your verified account. Some Home Depot store pages mention an annual cap on discount savings, so check the program terms if you are planning a large project.
+eligibility: Active-duty personnel, qualifying dependents, military retirees, DoD civilian personnel, honorably discharged veterans, and spouses.
+restrictions:
+  - Military status must be verified through Home Depot's third-party vendor (SheerID).
+  - In store, scan the virtual ID in The Home Depot app; online, sign in to your verified account.
+  - Applies to eligible purchases only. Some Home Depot store pages state an annual savings cap — confirm the current cap in the program terms.
+statedPercentOff: 10
+merchantUrl: https://www.homedepot.com/c/military
+sourceUrl: https://www.homedepot.com/c/military
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+featured: true
+tags: [military, veterans, home improvement]

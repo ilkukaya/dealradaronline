@@ -1,0 +1,77 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { owner, site } from '../../config/site';
+
+const topics = [
+  { value: 'general', label: 'General question' },
+  { value: 'deal-problem', label: 'Report a problem with an offer' },
+  { value: 'partnership', label: 'Partnerships, affiliate programs, or advertising' },
+  { value: 'privacy', label: 'Privacy request' },
+  { value: 'other', label: 'Something else' },
+];
+---
+
+<PageLayout
+  title="Contact Us"
+  description={`Contact ${site.name} with questions, corrections to an offer, partnership inquiries, or privacy requests.`}
+  dek="Questions, corrections, partnership inquiries, and privacy requests all come here."
+  path="/contact/"
+>
+  <p>
+    The fastest way to reach us is the form below. If you're reporting a problem with an offer, include the page link and what you saw at the store — we'll recheck it.
+    {owner.contactEmail && <> You can also email <a href={`mailto:${owner.contactEmail}`}>{owner.contactEmail}</a>.</>}
+  </p>
+
+  <form
+    name="contact"
+    method="POST"
+    action="/contact/thanks/"
+    data-netlify="true"
+    netlify-honeypot="website"
+    data-track-submit="Contact Submit"
+    class="card not-prose mt-8 space-y-5 p-5 sm:p-7"
+  >
+    <input type="hidden" name="form-name" value="contact" />
+    <input type="hidden" name="subject" value={`New message from ${site.name} contact form`} />
+    <p class="hidden" aria-hidden="true">
+      <label>Leave this empty: <input name="website" tabindex="-1" autocomplete="off" /></label>
+    </p>
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <label for="c-name" class="label">Your name</label>
+        <input id="c-name" name="name" type="text" required autocomplete="name" maxlength="120" class="field" />
+      </div>
+      <div>
+        <label for="c-email" class="label">Email address</label>
+        <input id="c-email" name="email" type="email" required autocomplete="email" maxlength="200" class="field" />
+      </div>
+    </div>
+    <div>
+      <label for="c-topic" class="label">Topic</label>
+      <select id="c-topic" name="topic" class="field" data-topic-select>
+        {topics.map((t) => <option value={t.value}>{t.label}</option>)}
+      </select>
+    </div>
+    <div>
+      <label for="c-page" class="label">Page link <span class="text-muted font-normal">(optional)</span></label>
+      <input id="c-page" name="page" type="url" inputmode="url" maxlength="500" placeholder="https://" class="field" />
+    </div>
+    <div>
+      <label for="c-message" class="label">Message</label>
+      <textarea id="c-message" name="message" required rows="6" maxlength="5000" class="field py-3"></textarea>
+    </div>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-muted text-sm">We use your details only to reply. See our <a href="/privacy/" class="link">privacy policy</a>.</p>
+      <button type="submit" class="btn-primary shrink-0"><Icon name="mail" class="h-4 w-4" /> Send message</button>
+    </div>
+  </form>
+
+  <script is:inline>
+    (function () {
+      var t = new URLSearchParams(location.search).get('topic');
+      var s = document.querySelector('[data-topic-select]');
+      if (t && s && Array.prototype.some.call(s.options, function (o) { return o.value === t; })) s.value = t;
+    })();
+  </script>
+</PageLayout>

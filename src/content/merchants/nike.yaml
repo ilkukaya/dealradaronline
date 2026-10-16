@@ -1,0 +1,28 @@
+name: Nike
+domain: nike.com
+websiteUrl: https://www.nike.com/
+status: published
+categories: [fashion]
+tagline: Athletic footwear and apparel brand with 10% discounts for military, students, teachers, and first responders.
+overview: |-
+  Nike sells shoes, apparel, and gear directly through Nike.com, the Nike App, and its own stores. Buying direct means Nike's own return policy applies, which is more generous than many apparel retailers.
+
+  Beyond seasonal sales, Nike offers standing 10% discounts to several groups, including US military members and their families, students, teachers, and first responders. These discounts apply to most items, but not all, and typically cannot be combined with other promo codes.
+tips:
+  - Free Nike membership unlocks free standard shipping above a threshold. Sign in before checking out.
+  - Discount programs exclude some items, so check the final price in your cart before ordering.
+  - Keep shoes unworn outdoors until you are sure they fit — Nike's return window is long, but condition still matters.
+facts:
+  - label: Standard returns
+    value: Most purchases can be returned or exchanged for any reason within 60 days.
+    sourceUrl: https://www.nike.com/help/a/how-to-return/app
+    checkedAt: 2026-10-16
+  - label: Member shipping
+    value: Nike Members get free standard shipping on orders of $50 or more.
+    sourceUrl: https://www.nike.com/membership/shipping
+    checkedAt: 2026-10-16
+  - label: Other discount programs
+    value: Nike also offers 10% discounts for eligible teachers, students, and US first responders and medical professionals.
+    sourceUrl: https://www.nike.com/help/a/teacher-discount
+    checkedAt: 2026-10-16
+affiliatePrograms: []

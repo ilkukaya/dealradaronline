@@ -1,0 +1,90 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { POLICY_DATES } from '../config/policies';
+import { analytics, linkMonetization, newsletter, operatorName, owner, site } from '../config/site';
+
+const analyticsProviders = [analytics.plausibleDomain && 'Plausible Analytics', analytics.umamiWebsiteId && 'Umami'].filter(Boolean) as string[];
+const monetizer = linkMonetization.skimlinksPublisherId ? 'Skimlinks' : linkMonetization.sovrnCommerceKey ? 'Sovrn Commerce' : '';
+const nlProvider = newsletter.provider === 'buttondown' && newsletter.buttondownUsername ? 'Buttondown' : newsletter.provider === 'mailerlite' && newsletter.mailerliteAction ? 'MailerLite' : 'Netlify Forms';
+---
+
+<PageLayout
+  title="Privacy Policy"
+  description={`What information ${site.name} collects, why, who processes it, and the choices you have.`}
+  dek="We collect as little as we can. This page describes exactly what the site does today."
+  updated={POLICY_DATES.privacy}
+  path="/privacy/"
+>
+  <p>
+    This policy explains how {site.name} ({site.domain}), operated by {operatorName}, handles information about visitors. It covers this website only. Stores you visit from our links have their own privacy policies.
+  </p>
+
+  <h2>Information you give us</h2>
+  <ul>
+    <li><strong>Contact form.</strong> Your name, email address, topic, and message. We use them only to reply and to keep a record of the conversation. Submissions are stored by our hosting provider, Netlify.</li>
+    <li>
+      <strong>Email list.</strong> Your email address and the page you signed up from. {nlProvider === 'Netlify Forms'
+        ? 'Sign-ups are currently stored with Netlify Forms. Our newsletter has not launched yet; when it does, we will move the list to an email service provider and every email will include an unsubscribe link.'
+        : `Sign-ups are handled by ${nlProvider}, which sends a confirmation email and includes an unsubscribe link in every message.`}
+    </li>
+  </ul>
+  <p>Please don't include sensitive information (such as government ID or account numbers) in messages.</p>
+
+  <h2>Information collected automatically</h2>
+  <ul>
+    <li>
+      <strong>Hosting logs.</strong> Like any website, our host (Netlify) processes technical data such as IP address, browser type, and the page requested in order to deliver the site and protect it from abuse. We don't use these logs to identify individual visitors.
+    </li>
+    {
+      analytics.clickEndpoint && (
+        <li>
+          <strong>Store-link counts.</strong> When you click a link to a store, the site records which offer and store were clicked, the type of link, where on the page it was, the page path, and the time. We don't store your IP address, set a cookie, or attach any identifier, so these counts can't be tied back to you. We use them to see which offers are useful.
+        </li>
+      )
+    }
+    {
+      analyticsProviders.length > 0 && (
+        <li>
+          <strong>Analytics.</strong> We use {analyticsProviders.join(' and ')}, which measure aggregate visits without cookies and without collecting personal identifiers. We also record aggregate events such as searches typed on the deals page and which categories are used.
+        </li>
+      )
+    }
+  </ul>
+  {analyticsProviders.length === 0 && <p>We don't currently run third-party analytics or advertising scripts on this site.</p>}
+
+  <h2>Cookies</h2>
+  <p>
+    {site.name} doesn't set cookies of its own{monetizer ? `, but our link partner ${monetizer} may set cookies to attribute purchases to us` : ''}. Stores and affiliate networks may set cookies on their own websites after you click through. See our <a href="/cookies/">cookie policy</a>.
+  </p>
+
+  <h2>How we share information</h2>
+  <p>We don't sell or rent personal information, and we don't share it for cross-context behavioral advertising. We share it only with:</p>
+  <ul>
+    <li>Service providers that run the site for us — currently Netlify (hosting, forms, and link counts){nlProvider !== 'Netlify Forms' ? `, ${nlProvider} (email)` : ''}{analyticsProviders.length ? `, ${analyticsProviders.join(', ')} (analytics)` : ''}{monetizer ? `, ${monetizer} (affiliate links)` : ''}.</li>
+    <li>Authorities, when required by law or to protect our rights or the safety of others.</li>
+  </ul>
+
+  <h2>How long we keep it</h2>
+  <p>
+    We keep contact messages as long as needed to handle your request and for a reasonable period afterward for our records. Email sign-ups are kept until you unsubscribe or ask us to delete them. Store-link counts don't contain personal information and are kept in aggregate.
+  </p>
+
+  <h2>Your choices and rights</h2>
+  <p>
+    You can ask us to access, correct, or delete the personal information we hold about you — for example a contact message or an email sign-up — through our <a href="/contact/?topic=privacy">contact form</a>{owner.contactEmail ? <> or by emailing <a href={`mailto:${owner.contactEmail}`}>{owner.contactEmail}</a></> : ''}. Depending on where you live, including California and other US states with privacy laws, you may have additional rights; we'll honor applicable requests and won't treat you differently for making one. Because we don't sell or share personal information for targeted advertising, there's nothing to opt out of, and we treat Global Privacy Control signals as an opt-out request if that ever changes.
+  </p>
+
+  <h2>Children</h2>
+  <p>This site is intended for adults and isn't directed to children under 13. We don't knowingly collect information from children under 13.</p>
+
+  <h2>Security</h2>
+  <p>The site is served only over HTTPS. No method of transmission or storage is completely secure, but we limit what we collect so there is little to protect.</p>
+
+  <h2>Changes</h2>
+  <p>If we add features that change how information is handled — such as a newsletter service or analytics — we'll update this page and the date above before they go live.</p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about privacy: use our <a href="/contact/?topic=privacy">contact form</a>{owner.contactEmail ? <> or email <a href={`mailto:${owner.contactEmail}`}>{owner.contactEmail}</a></> : ''}.{owner.mailingAddress ? ` Postal mail: ${owner.mailingAddress}.` : ''}
+  </p>
+</PageLayout>

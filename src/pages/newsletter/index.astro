@@ -1,0 +1,27 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import NewsletterForm from '../../components/forms/NewsletterForm.astro';
+import { newsletter, site } from '../../config/site';
+const live = newsletter.provider !== 'netlify';
+---
+
+<PageLayout
+  title="Email Updates"
+  description={`Sign up for ${site.name} email updates: offers we've checked and practical shopping guides. No daily blasts.`}
+  dek={live ? 'A short email with offers we have checked and guides worth reading.' : 'Join the list for our upcoming email newsletter.'}
+  path="/newsletter/"
+>
+  <p>
+    {live
+      ? `Each issue rounds up new and updated offers — with their restrictions — and links to new guides. We send at most one email a week.`
+      : `We're preparing a short email that rounds up new and updated offers, with their restrictions, and links to new guides. It hasn't launched yet. Join the list and you'll get the first issue when it does.`}
+  </p>
+  <ul>
+    <li>At most one email a week.</li>
+    <li>Every email includes an unsubscribe link.</li>
+    <li>We never sell or rent your email address.</li>
+  </ul>
+  <div class="card not-prose mt-8 p-5 sm:p-7">
+    <NewsletterForm variant="inline" idPrefix="page-nl" />
+  </div>
+</PageLayout>

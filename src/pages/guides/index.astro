@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import GuideCard from '../../components/ui/GuideCard.astro';
+import { getGuides } from '../../lib/catalog';
+
+const guides = await getGuides();
+---
+
+<BaseLayout title="Shopping Guides: Discounts, Coupons, Returns & Shipping" description="Practical, plain-English guides to judging discounts, using coupon codes, comparing final prices, checking return policies, and shopping online safely." canonicalPath="/guides/">
+  <div class="border-line border-b bg-white">
+    <div class="container-page py-8 sm:py-10">
+      <Breadcrumbs items={[{ name: 'Guides', href: '/guides/' }]} />
+      <h1 class="display mt-4 text-4xl font-semibold">Shopping guides</h1>
+      <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">
+        How to tell a real discount from a marketing one, what coupon fine print actually means, and how to compare the price you'll really pay.
+      </p>
+    </div>
+  </div>
+  <div class="container-page grid gap-4 py-10 md:grid-cols-2 lg:grid-cols-3">
+    {guides.map((g) => <GuideCard guide={g} headingLevel="h2" />)}
+  </div>
+</BaseLayout>

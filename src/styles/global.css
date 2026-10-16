@@ -1,0 +1,185 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/fraunces/wght.css';
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, 'Times New Roman', serif;
+
+  /* Deep navy type */
+  --color-ink: #0e1a35;
+  --color-ink-2: #2b3752;
+  --color-muted: #5b6478;
+  --color-faint: #8a92a3;
+
+  /* Soft neutrals */
+  --color-paper: #ffffff;
+  --color-canvas: #f7f5f1;
+  --color-sand: #efebe4;
+  --color-line: #e6e2da;
+  --color-line-strong: #d6d0c5;
+
+  /* Warm coral accent. `accent` is decorative; `accent-strong` passes WCAG AA on white for text and buttons. */
+  --color-accent: #f0603c;
+  --color-accent-strong: #c8401a;
+  --color-accent-deep: #a83515;
+  --color-accent-soft: #fff1eb;
+  --color-accent-line: #fbd5c7;
+
+  --color-positive: #1d6b45;
+  --color-positive-soft: #e8f4ee;
+  --color-caution: #8a5a00;
+  --color-caution-soft: #fdf4e1;
+  --color-navy-soft: #edf0f6;
+
+  --shadow-card: 0 1px 2px rgb(14 26 53 / 0.04), 0 2px 8px rgb(14 26 53 / 0.04);
+  --shadow-lift: 0 2px 4px rgb(14 26 53 / 0.05), 0 10px 24px rgb(14 26 53 / 0.08);
+
+  --radius-card: 14px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply text-ink;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    @apply underline-offset-2;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-accent-strong);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+@utility display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.015em;
+}
+
+@utility eyebrow {
+  @apply text-accent-strong text-xs font-semibold tracking-[0.12em] uppercase;
+}
+
+@utility card {
+  @apply bg-paper border-line rounded-[var(--radius-card)] border;
+  box-shadow: var(--shadow-card);
+}
+
+@utility btn {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-[0.95rem] font-semibold no-underline transition-colors;
+}
+
+@utility btn-primary {
+  @apply btn bg-accent-strong hover:bg-accent-deep text-white;
+}
+
+@utility btn-dark {
+  @apply btn bg-ink hover:bg-ink-2 text-white;
+}
+
+@utility btn-ghost {
+  @apply btn border-line-strong text-ink hover:border-ink border bg-white;
+}
+
+@utility chip {
+  @apply border-line text-ink-2 hover:border-ink-2 inline-flex min-h-9 items-center gap-1.5 rounded-full border bg-white px-3.5 text-sm font-medium no-underline transition-colors;
+  &[aria-pressed='true'],
+  &[aria-current='page'] {
+    @apply border-ink bg-ink text-white;
+  }
+}
+
+@utility link {
+  @apply text-accent-strong hover:text-accent-deep font-medium underline decoration-1 underline-offset-2;
+}
+
+@utility field {
+  @apply border-line-strong text-ink placeholder:text-faint focus:border-ink block min-h-11 w-full rounded-xl border bg-white px-4 text-base outline-none;
+}
+
+@utility label {
+  @apply text-ink-2 mb-1.5 block text-sm font-semibold;
+}
+
+/* Long-form editorial text (guides, policies). */
+@utility prose-editorial {
+  @apply text-ink-2 text-[1.0625rem] leading-[1.75];
+  & > * + * {
+    @apply mt-5;
+  }
+  & h2 {
+    @apply display text-ink mt-12 text-[1.65rem] leading-tight font-semibold;
+  }
+  & h3 {
+    @apply text-ink mt-8 text-lg font-semibold;
+  }
+  & a {
+    @apply link;
+  }
+  & ul {
+    @apply list-disc space-y-2 pl-6;
+  }
+  & ol {
+    @apply list-decimal space-y-2 pl-6;
+  }
+  & li::marker {
+    @apply text-accent;
+  }
+  & strong {
+    @apply text-ink font-semibold;
+  }
+  & blockquote {
+    @apply border-accent bg-accent-soft rounded-r-xl border-l-4 px-5 py-4;
+  }
+  & table {
+    @apply block w-full max-w-full border-collapse overflow-x-auto text-[0.95rem] sm:table;
+  }
+  & th {
+    @apply border-line-strong text-ink border-b-2 px-3 py-2 text-left font-semibold;
+  }
+  & td {
+    @apply border-line border-b px-3 py-2 align-top;
+  }
+  & hr {
+    @apply border-line my-10;
+  }
+  & code {
+    @apply bg-sand rounded px-1.5 py-0.5 text-[0.9em];
+  }
+}

@@ -1,0 +1,41 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { POLICY_DATES } from '../config/policies';
+import { analytics, linkMonetization, site } from '../config/site';
+
+const analyticsProviders = [analytics.plausibleDomain && 'Plausible Analytics', analytics.umamiWebsiteId && 'Umami'].filter(Boolean) as string[];
+const monetizer = linkMonetization.skimlinksPublisherId ? 'Skimlinks' : linkMonetization.sovrnCommerceKey ? 'Sovrn Commerce' : '';
+---
+
+<PageLayout
+  title="Cookie Policy"
+  description={`Which cookies ${site.name} uses (none of its own), and what happens when you click through to a store.`}
+  dek="Short answer: we don't set our own cookies."
+  updated={POLICY_DATES.cookies}
+  path="/cookies/"
+>
+  <h2>Cookies on this site</h2>
+  <p>
+    {site.name} doesn't set first-party cookies, and doesn't use local storage to track you. Contact and email forms work without cookies. Our store-link counter is cookieless and doesn't record identifiers.
+  </p>
+  {analyticsProviders.length > 0 && <p>We use {analyticsProviders.join(' and ')} for analytics. These tools are designed to work without cookies.</p>}
+  {
+    monetizer ? (
+      <p>
+        We use {monetizer} to turn some ordinary store links into affiliate links. {monetizer} may set cookies in your browser to record that a purchase came from our site. You can block third-party cookies in your browser settings.
+      </p>
+    ) : (
+      <p>We don't run advertising or third-party tracking scripts.</p>
+    )
+  }
+
+  <h2>Cookies on stores you visit</h2>
+  <p>
+    When you click a link to a store, you leave {site.name}. The store — and, for affiliate links, the affiliate network — may set cookies on its own site, for example to remember your cart or to record that you arrived from our link. Those cookies are governed by the store's and network's own policies.
+  </p>
+
+  <h2>Managing cookies</h2>
+  <p>
+    All modern browsers let you view, block, and delete cookies. Blocking cookies on store websites may affect features like shopping carts. For more on how we handle data, see our <a href="/privacy/">privacy policy</a>.
+  </p>
+</PageLayout>

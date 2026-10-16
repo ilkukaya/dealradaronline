@@ -1,0 +1,13 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+---
+
+<PageLayout title="You're on the list" description="Thanks for signing up for email updates." dek="Thanks — we received your email address." path="/newsletter/thanks/" noindex>
+  <p>
+    Our newsletter hasn't launched yet. When it does, we'll send the first issue to the address you entered, and every email will include a one-click unsubscribe link. If you change your mind before then, <a href="/contact/?topic=privacy">contact us</a> and we'll remove your address.
+  </p>
+  <p>In the meantime, browse <a href="/deals/">current deals</a> or read our <a href="/guides/">shopping guides</a>.</p>
+  <script is:inline>
+    window.addEventListener('load', function () { window.drTrack && window.drTrack('Newsletter Confirmed', {}); });
+  </script>
+</PageLayout>

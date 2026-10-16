@@ -1,0 +1,21 @@
+title: "Target free shipping on orders over $35 (or with a Target Circle Card)"
+merchant: target
+category: home-kitchen
+offerType: shipping
+description: Target.com orders over $35, or orders paid with a Target Circle Card, ship free. Smaller orders pay a flat $5.99 shipping fee.
+editorialSummary: |-
+  Target's threshold is easy to reach, but it is measured before tax and after promotional discounts. If a coupon pulls your order below $35, the flat shipping fee comes back — check the order summary after applying any code.
+
+  If you are just under the minimum, compare the shipping fee with the cost of adding something you would buy anyway, or choose free store pickup or drive-up if there is a Target nearby.
+eligibility: All Target.com shoppers with qualifying orders, or anyone paying with a Target Circle Card.
+restrictions:
+  - The $35 threshold excludes tax and promotional discounts.
+  - Orders under $35 without a Target Circle Card pay a flat $5.99 shipping fee.
+  - Circle Card free shipping covers the 50 states, DC, APO/FPO addresses, and Puerto Rico.
+merchantUrl: https://www.target.com/
+sourceUrl: https://www.target.com/help/article/000055608
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+tags: [free shipping]

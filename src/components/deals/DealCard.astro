@@ -1,0 +1,87 @@
+---
+import Monogram from '../ui/Monogram.astro';
+import Icon from '../ui/Icon.astro';
+import OutboundButton from './OutboundButton.astro';
+import { getOfferType, getCategory } from '../../config/taxonomy';
+import { formatDate, formatPriceWithPeriod, getDiscountPercent, getHeadline, isAffiliateLink } from '../../lib/deal-utils';
+import type { Deal, Merchant } from '../../lib/catalog';
+
+interface Props {
+  deal: Deal;
+  merchant: Merchant;
+  /** heading level for the title, to keep page outlines valid */
+  headingLevel?: 'h2' | 'h3';
+  layout?: 'grid' | 'feature';
+}
+const { deal, merchant, headingLevel = 'h3', layout = 'grid' } = Astro.props;
+const d = deal.data;
+const type = getOfferType(d.offerType);
+const category = getCategory(d.category);
+const headline = getHeadline(d);
+const pct = getDiscountPercent(d);
+const Heading = headingLevel;
+const href = `/deals/${deal.id}/`;
+const search = [d.title, merchant.data.name, d.description, type?.name, category?.name, ...d.tags].join(' ').toLowerCase();
+---
+
+<article
+  class:list={['card group relative flex flex-col p-5 transition-shadow hover:shadow-[var(--shadow-lift)]', layout === 'feature' && 'sm:p-6']}
+  data-deal-card
+  data-search={search}
+  data-merchant={merchant.id}
+  data-category={d.category}
+  data-type={d.offerType}
+  data-price={d.price ?? ''}
+  data-discount={pct ?? ''}
+  data-published={d.publishedAt.getTime()}
+  data-expires={d.endDate?.toISOString()}
+  data-expire-action="hide"
+>
+  <div class="flex items-start gap-3">
+    <Monogram name={merchant.data.name} size="sm" />
+    <div class="min-w-0 flex-1">
+      <p class="text-ink-2 truncate text-sm font-semibold">{merchant.data.name}</p>
+      <p class="text-muted text-xs">{type?.label}{category ? ` · ${category.short}` : ''}</p>
+    </div>
+    {
+      d.fixture && (
+        <span class="bg-caution-soft text-caution rounded-full px-2 py-0.5 text-[0.7rem] font-semibold">Sample data</span>
+      )
+    }
+  </div>
+
+  <Heading class="mt-4 text-[1.05rem] leading-snug font-semibold">
+    <a href={href} class="text-ink after:absolute after:inset-0 after:rounded-[var(--radius-card)] hover:underline" data-track="Deal Click" data-track-props={JSON.stringify({ deal: deal.id })}>
+      {d.title}
+    </a>
+  </Heading>
+
+  <div class="mt-4 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+    <span class="text-ink text-2xl font-bold tracking-tight">{headline.value}</span>
+    {
+      d.referencePrice !== undefined && (
+        <span class="text-muted text-sm">
+          <span class="sr-only">Regular price </span>
+          <s>{formatPriceWithPeriod(d.referencePrice, d.pricePeriod)}</s>
+        </span>
+      )
+    }
+    {
+      pct !== undefined && d.referencePrice !== undefined && (
+        <span class="bg-accent-soft text-accent-deep rounded-full px-2 py-0.5 text-xs font-bold">{pct}% off</span>
+      )
+    }
+  </div>
+  {headline.note && <p class="text-muted mt-0.5 text-sm">{headline.note}</p>}
+
+  <p class="text-ink-2 mt-3 line-clamp-3 text-[0.92rem] leading-relaxed">{d.description}</p>
+
+  <div class="border-line mt-auto flex items-center justify-between gap-3 border-t pt-4 text-xs">
+    <span class="text-muted inline-flex items-center gap-1.5">
+      <Icon name="clock" class="h-3.5 w-3.5" /> Checked {formatDate(d.lastVerified)}
+    </span>
+    <span class="relative z-10">
+      <OutboundButton deal={deal} merchant={merchant} placement="card" variant="text" label={isAffiliateLink(d) ? 'Shop' : 'Visit store'} />
+    </span>
+  </div>
+</article>

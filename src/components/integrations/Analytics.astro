@@ -1,0 +1,19 @@
+---
+/**
+ * Optional, cookieless analytics. Nothing loads unless the env vars are set.
+ * Both Plausible and Umami are privacy-focused and do not set cookies, so no
+ * consent banner is required for them in most US contexts. If you add a
+ * cookie-based tool (e.g. GA4), you must add a consent mechanism first.
+ */
+import { analytics } from '../../config/site';
+---
+
+{analytics.plausibleDomain && <script is:inline defer data-domain={analytics.plausibleDomain} src={analytics.plausibleSrc} />}
+{
+  analytics.plausibleDomain && (
+    <script is:inline>
+      window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments); };
+    </script>
+  )
+}
+{analytics.umamiWebsiteId && <script is:inline defer src={analytics.umamiSrc} data-website-id={analytics.umamiWebsiteId} data-do-not-track="true" />}

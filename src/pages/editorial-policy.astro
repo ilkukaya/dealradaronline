@@ -1,0 +1,48 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { POLICY_DATES } from '../config/policies';
+import { site } from '../config/site';
+---
+
+<PageLayout
+  title="Editorial Policy"
+  description={`The standards ${site.name} follows for independence, accuracy, sourcing, corrections, and labeling of commercial content.`}
+  dek="The standards we hold ourselves to, and how commercial relationships are kept separate from what we publish."
+  updated={POLICY_DATES.editorial}
+  path="/editorial-policy/"
+>
+  <h2>Independence</h2>
+  <p>
+    Editors decide what to list and how to describe it. Stores and affiliate networks can't buy a place on the site, approve our wording, or require us to remove criticism. Whether a link earns a commission has no bearing on whether we list an offer.
+  </p>
+
+  <h2>Accuracy and sourcing</h2>
+  <ul>
+    <li>Offer terms are confirmed against the store's own published pages or an authorized network feed, and the source is linked on the page.</li>
+    <li>Every offer shows when it was last checked and how.</li>
+    <li>Guides describe how things generally work and avoid stating store policies as permanent facts; store-specific details live on store and offer pages with their sources.</li>
+    <li>We don't present guesses as facts. When terms are unclear, we say so or leave them out.</li>
+  </ul>
+
+  <h2>How content is produced</h2>
+  <p>
+    We use software tools — including AI writing assistants — to help research, draft, and check content. Published content is reviewed against the sources it cites before publication, and we're responsible for everything on the site regardless of the tools used to produce it.
+  </p>
+
+  <h2>Labeling commercial content</h2>
+  <ul>
+    <li>Pages with links to stores carry a disclosure near the link that says whether it's an affiliate link.</li>
+    <li>If we ever publish sponsored content, it will be clearly labeled “Sponsored” at the top of the page.</li>
+    <li>Advertising, if we add it, will be labeled “Advertisement” and kept visually separate from offers.</li>
+  </ul>
+
+  <h2>Corrections and updates</h2>
+  <p>
+    When we find an error, we fix it promptly. Material corrections to guides are noted with an updated date. Offers that change are rechecked and their “last checked” date updated; offers that end are marked as ended. Report a problem through our <a href="/contact/?topic=deal-problem">contact form</a>.
+  </p>
+
+  <h2>Reviews and ratings</h2>
+  <p>
+    We don't currently publish product reviews or star ratings. If we do in the future, we'll explain how products were evaluated and won't publish ratings we didn't produce.
+  </p>
+</PageLayout>

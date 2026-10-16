@@ -1,0 +1,20 @@
+---
+/**
+ * Site-wide link monetization from an *approved* network account.
+ * Disabled unless the matching env var is set. Only one provider may be active;
+ * running two link-rewriting scripts at once breaks attribution and may violate
+ * network terms. Confirm the snippet against your network dashboard before enabling.
+ */
+import { linkMonetization } from '../../config/site';
+
+const { skimlinksPublisherId, sovrnCommerceKey } = linkMonetization;
+if (skimlinksPublisherId && sovrnCommerceKey) {
+  console.warn('[link-monetization] Both Skimlinks and Sovrn are configured. Only Skimlinks will load. Remove one of the env vars.');
+}
+const useSkimlinks = Boolean(skimlinksPublisherId);
+const useSovrn = !useSkimlinks && Boolean(sovrnCommerceKey);
+---
+
+{useSkimlinks && <script is:inline defer src={`https://s.skimresources.com/js/${encodeURIComponent(skimlinksPublisherId)}.skimlinks.js`} />}
+{useSovrn && <script is:inline define:vars={{ key: sovrnCommerceKey }}>window.vglnk = { key: key };</script>}
+{useSovrn && <script is:inline defer src="https://cdn.viglink.com/api/vglnk.js" />}

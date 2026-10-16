@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro';
+import { formatDate } from '../../lib/deal-utils';
+import { readingMinutes, type Guide } from '../../lib/catalog';
+
+interface Props {
+  guide: Guide;
+  headingLevel?: 'h2' | 'h3';
+}
+const { guide, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+const g = guide.data;
+---
+
+<article class="card group relative flex flex-col p-5 sm:p-6">
+  <p class="text-muted flex items-center gap-2 text-xs font-medium">
+    <Icon name="book" class="text-accent-strong h-4 w-4" />
+    Guide · {readingMinutes(guide.body)} min read
+  </p>
+  <Heading class="display mt-3 text-xl leading-snug font-semibold">
+    <a href={`/guides/${guide.id}/`} class="text-ink after:absolute after:inset-0 hover:underline">{g.title}</a>
+  </Heading>
+  <p class="text-ink-2 mt-2 line-clamp-3 text-[0.95rem] leading-relaxed">{g.summary}</p>
+  <p class="text-muted mt-auto pt-4 text-xs">Updated {formatDate(g.updatedAt ?? g.publishedAt)}</p>
+</article>

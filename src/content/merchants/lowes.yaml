@@ -1,0 +1,24 @@
+name: Lowe's
+domain: lowes.com
+websiteUrl: https://www.lowes.com/
+status: published
+categories: [home-kitchen]
+tagline: Home-improvement retailer with an everyday military discount and free MyLowe's Rewards membership perks.
+overview: |-
+  Lowe's sells home-improvement supplies, appliances, tools, and outdoor products online and in stores nationwide. Its free MyLowe's Rewards program is the key to some of the better standing savings, including free standard shipping at certain member tiers.
+
+  Lowe's runs an everyday discount for current service members, veterans, and their spouses, verified online through ID.me. The discount comes with a list of exclusions — sale items, major appliances, commodities like lumber, and gift cards among them — so it works best on full-price tools and home goods.
+tips:
+  - Link your military verification to your Lowes.com account before shopping so the discount applies automatically online.
+  - The military discount does not stack with sales or other discounts; compare it with any current sale price.
+  - Major appliances have a 48-hour return window. Inspect them when they arrive.
+facts:
+  - label: Standard returns
+    value: Most new, unused merchandise can be returned with a receipt within 90 days. Major appliances have 48 hours; TVs and electronics have 30 days.
+    sourceUrl: https://www.lowes.com/l/help/returns-policy
+    checkedAt: 2026-10-16
+  - label: Member shipping
+    value: MyLowe's Rewards Silver members get free standard shipping (excludes Alaska and Hawaii).
+    sourceUrl: https://www.lowes.com/l/about/mylowes-rewards
+    checkedAt: 2026-10-16
+affiliatePrograms: []

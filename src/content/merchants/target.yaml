@@ -1,0 +1,28 @@
+name: Target
+domain: target.com
+websiteUrl: https://www.target.com/
+status: published
+categories: [home-kitchen, fashion, beauty-personal-care]
+tagline: General-merchandise retailer known for home goods, apparel, and beauty, with a $35 free-shipping threshold.
+overview: |-
+  Target sells home goods, apparel, beauty, groceries, electronics, and toys online and in stores across the US. For online orders, the main thing to plan around is the free-shipping threshold: orders under it carry a flat shipping fee, while store pickup and drive-up are alternatives if you live near a store.
+
+  Target also publishes a price-match policy and a generally long return window for most unopened items, with shorter windows for electronics and some brands. Those policies make Target a lower-risk place to buy gifts and household items when the price is competitive.
+tips:
+  - The free-shipping threshold is measured before tax and after promotional discounts, so a coupon can drop your order below it.
+  - Electronics and certain brands have shorter return windows than the standard policy — check before buying a gift early.
+  - Price matches have exclusions and Target does not accept screenshots; bring up the competitor's live listing.
+facts:
+  - label: Free shipping
+    value: Orders over $35 (before tax, after promotional discounts) or paid with a Target Circle Card ship free. Other orders pay a flat $5.99 shipping fee.
+    sourceUrl: https://www.target.com/help/article/000055608
+    checkedAt: 2026-10-16
+  - label: Standard returns
+    value: Most unopened items in new condition can be returned within 90 days. Electronics and entertainment have a 30-day window; Apple, Beats, and mobile phones have 14 days.
+    sourceUrl: https://www.target.com/help/articles/returns-exchanges/returns
+    checkedAt: 2026-10-16
+  - label: Price match
+    value: Target matches the price of identical items at the time of purchase or within 14 days after purchase. Exclusions apply and screenshots are not accepted.
+    sourceUrl: https://www.target.com/help/articles/policies-guidelines/price-match-guarantee
+    checkedAt: 2026-10-16
+affiliatePrograms: []

@@ -1,0 +1,26 @@
+title: "Walmart+ Student: half-price Walmart+ for college students"
+merchant: walmart
+category: memberships
+offerType: student
+description: Undergraduate and graduate students at US Title IV schools can get Walmart+ for $6.47 a month or $49 a year, starting with a 30-day trial.
+editorialSummary: |-
+  Walmart+ Student gives college students the full Walmart+ membership at half the regular price. It is a strong fit for students who live off campus and order groceries or household basics for delivery.
+
+  Walmart re-checks eligibility every year. If verification fails — for example after graduation — the plan renews at the regular price, so keep an eye on renewal emails in your final year.
+eligibility: Current or incoming undergraduate or graduate students at a Title IV-accredited US college or university.
+restrictions:
+  - Student status is verified through SheerID.
+  - Eligibility is re-checked annually; if it fails, the plan renews at $12.95/month or $98/year plus tax.
+  - Walmart+ Assist members are not eligible.
+  - Membership starts as a 30-day trial once you qualify.
+price: 6.47
+pricePeriod: month
+referencePrice: 12.95
+referencePriceNote: Regular Walmart+ monthly price, as stated by Walmart
+merchantUrl: https://www.walmart.com/plus/student
+sourceUrl: https://www.walmart.com/plus/student
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+tags: [walmart plus, students]

@@ -1,0 +1,357 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DealCard from '../components/deals/DealCard.astro';
+import GuideCard from '../components/ui/GuideCard.astro';
+import StoreCard from '../components/ui/StoreCard.astro';
+import Monogram from '../components/ui/Monogram.astro';
+import Icon from '../components/ui/Icon.astro';
+import NewsletterForm from '../components/forms/NewsletterForm.astro';
+import JsonLd from '../components/seo/JsonLd.astro';
+import AdSlot from '../components/integrations/AdSlot.astro';
+import { absoluteUrl, site } from '../config/site';
+import {
+  getActiveDeals,
+  getCategoriesWithContent,
+  getGuides,
+  getMerchantMap,
+  getOfferTypesWithContent,
+  getPublishedMerchants,
+} from '../lib/catalog';
+import { formatDate, getHeadline } from '../lib/deal-utils';
+
+const [active, merchantMap, merchants, cats, programs, guides] = await Promise.all([
+  getActiveDeals(),
+  getMerchantMap(),
+  getPublishedMerchants(),
+  getCategoriesWithContent(),
+  getOfferTypesWithContent(),
+  getGuides(),
+]);
+const m = (id: string) => merchantMap.get(id)!;
+
+const featured = active.filter((d) => d.data.featured).slice(0, 4);
+const featuredIds = new Set(featured.map((d) => d.id));
+const recent = active.filter((d) => !featuredIds.has(d.id)).slice(0, 6);
+const picks = active.filter((d) => d.data.editorsPick).slice(0, 3);
+const recentlyChecked = [...active].sort((a, b) => b.data.lastVerified.getTime() - a.data.lastVerified.getTime()).slice(0, 4);
+const storesWithCounts = merchants
+  .map((mm) => ({ merchant: mm, count: active.filter((d) => d.data.merchant === mm.id).length }))
+  .filter((s) => s.count > 0)
+  .sort((a, b) => b.count - a.count || a.merchant.data.name.localeCompare(b.merchant.data.name))
+  .slice(0, 8);
+
+const programIcons: Record<string, string> = { student: 'student', military: 'shield', assistance: 'heart', trial: 'calendar', shipping: 'truck', coupon: 'ticket', sale: 'tag' };
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${site.url}/#organization`,
+    name: site.name,
+    url: `${site.url}/`,
+    logo: absoluteUrl('/icon-512.png'),
+    description: site.description,
+    sameAs: Object.values(site.social).filter(Boolean),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${site.url}/#website`,
+    name: site.name,
+    url: `${site.url}/`,
+    inLanguage: 'en-US',
+    publisher: { '@id': `${site.url}/#organization` },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: `${site.url}/deals/?q={search_term_string}` },
+      'query-input': 'required name=search_term_string',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`${site.name} — ${site.tagline}`}
+  description="Independent US deal discovery: student and military discounts, free trials, free shipping, and promo codes — with restrictions and last-checked dates."
+  canonicalPath="/"
+>
+  <JsonLd slot="head" data={jsonLd} />
+
+  <!-- Hero -->
+  <section class="border-line border-b bg-white">
+    <div class="container-page grid gap-10 py-10 sm:py-14 lg:grid-cols-[1.25fr_1fr] lg:items-center lg:gap-16">
+      <div>
+        <p class="eyebrow">Independent US deal discovery</p>
+        <h1 class="display mt-3 text-[2.35rem] leading-[1.08] font-semibold sm:text-5xl lg:text-[3.4rem]">
+          Real savings, with the <span class="text-accent-strong italic">fine print</span> up front.
+        </h1>
+        <p class="text-ink-2 mt-5 max-w-xl text-lg leading-relaxed">
+          We track standing discounts, student and military pricing, free trials, and shipping perks from major US stores — and show the restrictions and the date we last checked, every time.
+        </p>
+        <form action="/deals/" method="get" role="search" class="mt-7 max-w-xl">
+          <label for="hero-search" class="sr-only">Search deals and stores</label>
+          <div class="border-line-strong focus-within:border-ink shadow-card flex items-center gap-2 rounded-full border bg-white p-1.5 pl-4">
+            <Icon name="search" class="text-faint h-5 w-5 shrink-0" />
+            <input id="hero-search" name="q" type="search" placeholder="Try “student”, “Target”, or “free shipping”" class="placeholder:text-faint min-w-0 flex-1 bg-transparent py-2 text-base outline-none" />
+            <button type="submit" class="btn-dark !min-h-10 !px-5">Search</button>
+          </div>
+        </form>
+        {
+          programs.length > 0 && (
+            <div class="mt-5 flex flex-wrap gap-2">
+              {programs.map((p) => (
+                <a href={`/discounts/${p.slug}/`} class="chip" data-track="Category Select" data-track-props={JSON.stringify({ category: `program:${p.slug}`, placement: 'hero' })}>
+                  <Icon name={programIcons[p.slug] ?? 'tag'} class="text-accent-strong h-4 w-4" />
+                  {p.label === 'Free trial' ? 'Free trials' : p.name.replace('Discounts for Government Assistance Recipients', 'Assistance discounts')}
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      {
+        recentlyChecked.length > 0 && (
+          <aside class="card bg-canvas/60 p-5 sm:p-6" aria-labelledby="recently-checked">
+            <div class="flex items-center justify-between">
+              <h2 id="recently-checked" class="text-ink flex items-center gap-2 text-sm font-semibold">
+                <Icon name="radar" class="text-accent-strong h-4.5 w-4.5" /> Recently checked
+              </h2>
+              <a href="/deals/" class="link text-sm">All deals</a>
+            </div>
+            <ul class="divide-line mt-4 divide-y">
+              {recentlyChecked.map((d) => (
+                <li class="flex items-center gap-3 py-3">
+                  <Monogram name={m(d.data.merchant).data.name} size="sm" />
+                  <div class="min-w-0 flex-1">
+                    <a href={`/deals/${d.id}/`} class="text-ink line-clamp-1 text-[0.95rem] font-medium hover:underline">
+                      {d.data.title}
+                    </a>
+                    <p class="text-muted text-xs">
+                      {m(d.data.merchant).data.name} · checked {formatDate(d.data.lastVerified)}
+                    </p>
+                  </div>
+                  <span class="text-ink shrink-0 text-sm font-bold">{getHeadline(d.data).value}</span>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    featured.length > 0 && (
+      <section class="container-page pt-14" aria-labelledby="featured">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <p class="eyebrow">Featured</p>
+            <h2 id="featured" class="display mt-1 text-3xl font-semibold">Worth checking first</h2>
+          </div>
+          <a href="/deals/" class="link hidden text-sm sm:inline">
+            See all deals
+          </a>
+        </div>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {featured.map((d) => (
+            <DealCard deal={d} merchant={m(d.data.merchant)} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    (cats.length > 0 || programs.length > 0) && (
+      <section class="container-page pt-16" aria-labelledby="browse">
+        <p class="eyebrow">Browse</p>
+        <h2 id="browse" class="display mt-1 text-3xl font-semibold">
+          Find savings by who you are or what you need
+        </h2>
+        <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {programs.map((p) => (
+            <a href={`/discounts/${p.slug}/`} class="card group flex items-center gap-4 p-4 no-underline hover:shadow-[var(--shadow-lift)]" data-track="Category Select" data-track-props={JSON.stringify({ category: `program:${p.slug}`, placement: 'home-browse' })}>
+              <span class="bg-accent-soft text-accent-strong flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
+                <Icon name={programIcons[p.slug] ?? 'tag'} class="h-5.5 w-5.5" />
+              </span>
+              <span class="min-w-0">
+                <span class="text-ink block font-semibold group-hover:underline">{p.name}</span>
+                <span class="text-muted block text-sm">
+                  {p.deals.length} {p.deals.length === 1 ? 'offer' : 'offers'}
+                </span>
+              </span>
+            </a>
+          ))}
+          {cats.map((c) => (
+            <a href={`/categories/${c.slug}/`} class="card group flex items-center gap-4 p-4 no-underline hover:shadow-[var(--shadow-lift)]" data-track="Category Select" data-track-props={JSON.stringify({ category: c.slug, placement: 'home-browse' })}>
+              <span class="bg-navy-soft text-ink flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
+                <Icon name={c.icon} class="h-5.5 w-5.5" />
+              </span>
+              <span class="min-w-0">
+                <span class="text-ink block font-semibold group-hover:underline">{c.name}</span>
+                <span class="text-muted block text-sm">
+                  {c.deals.length} {c.deals.length === 1 ? 'offer' : 'offers'}
+                </span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    recent.length > 0 && (
+      <section class="container-page pt-16" aria-labelledby="recent">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <p class="eyebrow">Recently added</p>
+            <h2 id="recent" class="display mt-1 text-3xl font-semibold">New on the radar</h2>
+          </div>
+          <a href="/deals/?sort=newest" class="link text-sm">
+            Newest deals
+          </a>
+        </div>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {recent.map((d) => (
+            <DealCard deal={d} merchant={m(d.data.merchant)} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    picks.length > 0 && (
+      <section class="pt-16" aria-labelledby="picks">
+        <div class="bg-white border-line border-y">
+          <div class="container-page py-14">
+            <p class="eyebrow">Editor’s picks</p>
+            <h2 id="picks" class="display mt-1 text-3xl font-semibold">
+              Savings people often miss
+            </h2>
+            <div class="mt-8 grid gap-8 lg:grid-cols-3">
+              {picks.map((d) => (
+                <article class="flex flex-col">
+                  <div class="flex items-center gap-3">
+                    <Monogram name={m(d.data.merchant).data.name} size="sm" />
+                    <p class="text-ink-2 text-sm font-semibold">{m(d.data.merchant).data.name}</p>
+                  </div>
+                  <h3 class="display mt-3 text-xl leading-snug font-semibold">
+                    <a href={`/deals/${d.id}/`} class="text-ink hover:underline">
+                      {d.data.title}
+                    </a>
+                  </h3>
+                  <p class="text-ink-2 mt-3 line-clamp-4 leading-relaxed">{d.data.editorialSummary.split('\n')[0]}</p>
+                  <a href={`/deals/${d.id}/`} class="link mt-3 inline-flex items-center gap-1 text-sm">
+                    Read the details <Icon name="arrow" class="h-4 w-4" />
+                  </a>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    storesWithCounts.length > 0 && (
+      <section class="container-page pt-16" aria-labelledby="stores">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <p class="eyebrow">Stores</p>
+            <h2 id="stores" class="display mt-1 text-3xl font-semibold">Stores we cover</h2>
+          </div>
+          <a href="/stores/" class="link text-sm">
+            All stores
+          </a>
+        </div>
+        <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {storesWithCounts.map((s) => (
+            <StoreCard merchant={s.merchant} offerCount={s.count} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <AdSlot id="home-mid" />
+
+  <!-- How it works -->
+  <section class="container-page pt-16" aria-labelledby="how">
+    <div class="card overflow-hidden">
+      <div class="grid lg:grid-cols-[1fr_1.6fr]">
+        <div class="bg-accent-soft p-7 sm:p-9">
+          <p class="eyebrow">How it works</p>
+          <h2 id="how" class="display mt-1 text-3xl font-semibold">A deal site that shows its work</h2>
+          <p class="text-ink-2 mt-4 leading-relaxed">
+            We don't run giveaways, countdown timers, or "only 2 left" banners. We list offers we can confirm on the store's own website, tell you who qualifies, and link you straight to the store.
+          </p>
+          <a href="/how-we-find-deals/" class="link mt-5 inline-flex items-center gap-1">
+            How we find deals <Icon name="arrow" class="h-4 w-4" />
+          </a>
+        </div>
+        <ol class="divide-line grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          {
+            [
+              { icon: 'radar', title: 'We find the offer', text: 'Standing discounts, trials, shipping perks, and codes from major US stores — confirmed against the store’s own pages.' },
+              { icon: 'shield', title: 'We write down the catch', text: 'Who qualifies, what is excluded, when it renews, and the date we last checked it. No fake urgency.' },
+              { icon: 'store', title: 'You go to the store', text: 'Every “Go to store” button opens the merchant’s site. Some links may earn us a commission; it never changes your price.' },
+            ].map((s, i) => (
+              <li class="p-7">
+                <span class="text-faint text-sm font-semibold">0{i + 1}</span>
+                <Icon name={s.icon} class="text-accent-strong mt-3 h-7 w-7" />
+                <h3 class="text-ink mt-3 font-semibold">{s.title}</h3>
+                <p class="text-ink-2 mt-2 text-[0.95rem] leading-relaxed">{s.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  {
+    guides.length > 0 && (
+      <section class="container-page pt-16" aria-labelledby="guides">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <p class="eyebrow">Shopping guides</p>
+            <h2 id="guides" class="display mt-1 text-3xl font-semibold">Shop smarter, not just cheaper</h2>
+          </div>
+          <a href="/guides/" class="link text-sm">
+            All guides
+          </a>
+        </div>
+        <div class="mt-6 grid gap-4 md:grid-cols-3">
+          {guides.slice(0, 3).map((g) => (
+            <GuideCard guide={g} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Newsletter -->
+  <section class="container-page pt-16" aria-labelledby="newsletter">
+    <div class="bg-ink relative overflow-hidden rounded-3xl px-6 py-10 sm:px-10 sm:py-12">
+      <svg aria-hidden="true" viewBox="0 0 200 200" class="pointer-events-none absolute -top-16 -right-16 h-72 w-72 opacity-[0.12]">
+        <circle cx="100" cy="100" r="96" fill="none" stroke="#fff" stroke-width="2"></circle>
+        <circle cx="100" cy="100" r="64" fill="none" stroke="#fff" stroke-width="2"></circle>
+        <circle cx="100" cy="100" r="32" fill="none" stroke="#fff" stroke-width="2"></circle>
+        <path d="M100 100 L100 4 A96 96 0 0 1 183 52 Z" fill="#f0603c"></path>
+      </svg>
+      <div class="relative grid gap-8 lg:grid-cols-2 lg:items-center">
+        <div>
+          <h2 id="newsletter" class="display text-3xl font-semibold text-white">Get the best offers by email</h2>
+          <p class="mt-3 max-w-md leading-relaxed text-white/75">
+            A short, plain email with offers we've checked and guides worth reading. No daily blasts.
+          </p>
+        </div>
+        <NewsletterForm idPrefix="home-nl" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

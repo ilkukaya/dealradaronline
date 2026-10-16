@@ -1,0 +1,62 @@
+# Netlify configuration for DealRadar Online (static Astro site + small functions)
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # PUBLIC_SITE_URL (canonical origin for canonical URLs, sitemap and feeds) is set
+  # in the Netlify UI so it can be switched to the custom domain without a code
+  # change. Defaults to https://dealradaronline.com when unset (src/config/site.ts).
+
+[functions]
+  node_bundler = "esbuild"
+
+# Friendly aliases
+[[redirects]]
+  from = "/feed"
+  to = "/rss.xml"
+  status = 301
+
+[[redirects]]
+  from = "/feed/"
+  to = "/rss.xml"
+  status = 301
+
+[[redirects]]
+  from = "/search"
+  to = "/deals/"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/coupons/"
+  to = "/discounts/"
+  status = 301
+
+# Security headers (static responses)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# Fingerprinted assets can be cached forever.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/og/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/pins/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

@@ -1,0 +1,27 @@
+---
+/**
+ * Non-photographic store mark: initials on a soft tile. We don't use store logos
+ * because we don't have permission to reproduce them.
+ */
+interface Props {
+  name: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+const { name, size = 'md' } = Astro.props;
+const clean = name.replace(/^The\s+/i, '').replace(/[^A-Za-z0-9 ]/g, '');
+const parts = clean.split(/\s+/).filter(Boolean);
+const initials = (parts.length > 1 ? parts[0]![0]! + parts[1]![0]! : clean.slice(0, 2)).toUpperCase();
+const palettes = [
+  'bg-navy-soft text-ink',
+  'bg-accent-soft text-accent-deep',
+  'bg-sand text-ink-2',
+  'bg-positive-soft text-positive',
+  'bg-caution-soft text-caution',
+];
+let hash = 0;
+for (const ch of clean) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+const palette = palettes[hash % palettes.length];
+const sizes = { sm: 'h-9 w-9 text-xs rounded-lg', md: 'h-11 w-11 text-sm rounded-xl', lg: 'h-16 w-16 text-xl rounded-2xl' };
+---
+
+<span class:list={['inline-flex shrink-0 items-center justify-center font-bold tracking-wide', sizes[size], palette]} aria-hidden="true">{initials}</span>

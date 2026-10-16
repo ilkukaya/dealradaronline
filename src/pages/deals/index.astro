@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DealCard from '../../components/deals/DealCard.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { categories, offerTypes } from '../../config/taxonomy';
+import { getActiveDeals, getMerchantMap } from '../../lib/catalog';
+
+const [deals, merchantMap] = await Promise.all([getActiveDeals(), getMerchantMap()]);
+const m = (id: string) => merchantMap.get(id)!;
+
+const usedCats = categories.filter((c) => deals.some((d) => d.data.category === c.slug));
+const usedTypes = offerTypes.filter((t) => deals.some((d) => d.data.offerType === t.slug));
+const usedStores = [...new Set(deals.map((d) => d.data.merchant))].map(m).sort((a, b) => a.data.name.localeCompare(b.data.name));
+const hasPrices = deals.some((d) => d.data.price !== undefined);
+const hasDiscounts = deals.some((d) => d.data.referencePrice !== undefined || d.data.statedPercentOff !== undefined);
+const PAGE_SIZE = 24;
+---
+
+<BaseLayout
+  title="All Deals, Discounts & Offers"
+  description="Every active offer we track from US stores — student and military discounts, free trials, free shipping, and promo codes — with the fine print."
+  canonicalPath="/deals/"
+>
+  <div class="border-line border-b bg-white">
+    <div class="container-page py-8 sm:py-10">
+      <Breadcrumbs items={[{ name: 'Deals', href: '/deals/' }]} />
+      <h1 class="display mt-4 text-4xl font-semibold sm:text-[2.75rem]">All deals</h1>
+      <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">
+        Every active offer we track, newest first. Each one links to the store and lists who qualifies, the main restrictions, and when we last checked it.
+      </p>
+    </div>
+  </div>
+
+  <div class="container-page py-8" data-deal-browser data-page-size={PAGE_SIZE}>
+    <form class="card grid grid-cols-2 gap-3 p-4 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] lg:items-end" role="search" aria-label="Filter deals" data-filter-form onsubmit="return false">
+      <div class="col-span-2 lg:col-span-1">
+        <label for="f-q" class="label">Search</label>
+        <div class="relative">
+          <Icon name="search" class="text-faint pointer-events-none absolute top-1/2 left-3.5 h-4.5 w-4.5 -translate-y-1/2" />
+          <input id="f-q" name="q" type="search" class="field pl-10" placeholder="Store, offer, or keyword" autocomplete="off" />
+        </div>
+      </div>
+      <div>
+        <label for="f-category" class="label">Category</label>
+        <select id="f-category" name="category" class="field !min-h-10 !px-3 text-sm sm:!min-h-11 sm:text-base">
+          <option value="">All categories</option>
+          {usedCats.map((c) => <option value={c.slug}>{c.name}</option>)}
+        </select>
+      </div>
+      <div>
+        <label for="f-type" class="label">Type</label>
+        <select id="f-type" name="type" class="field !min-h-10 !px-3 text-sm sm:!min-h-11 sm:text-base">
+          <option value="">All types</option>
+          {usedTypes.map((t) => <option value={t.slug}>{t.name}</option>)}
+        </select>
+      </div>
+      <div>
+        <label for="f-store" class="label">Store</label>
+        <select id="f-store" name="store" class="field !min-h-10 !px-3 text-sm sm:!min-h-11 sm:text-base">
+          <option value="">All stores</option>
+          {usedStores.map((s) => <option value={s.id}>{s.data.name}</option>)}
+        </select>
+      </div>
+      <div>
+        <label for="f-sort" class="label">Sort by</label>
+        <select id="f-sort" name="sort" class="field !min-h-10 !px-3 text-sm sm:!min-h-11 sm:text-base">
+          <option value="newest">Newest</option>
+          {hasPrices && <option value="price-asc">Price: low to high</option>}
+          {hasPrices && <option value="price-desc">Price: high to low</option>}
+          {hasDiscounts && <option value="discount">Biggest discount</option>}
+        </select>
+      </div>
+    </form>
+
+    <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+      <p class="text-muted text-sm" aria-live="polite" data-result-count>
+        {deals.length} {deals.length === 1 ? 'offer' : 'offers'}
+      </p>
+      <button type="button" class="link hidden text-sm" data-clear-filters>Clear filters</button>
+    </div>
+
+    {
+      deals.length > 0 ? (
+        <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-deal-grid>
+          {deals.map((d) => (
+            <DealCard deal={d} merchant={m(d.data.merchant)} headingLevel="h2" />
+          ))}
+        </div>
+      ) : null
+    }
+
+    <div class="card mt-4 px-6 py-14 text-center" data-empty-state hidden={deals.length > 0}>
+      <Icon name="radar" class="text-accent-strong mx-auto h-10 w-10" />
+      <h2 class="display mt-4 text-2xl font-semibold">No offers match those filters</h2>
+      <p class="text-ink-2 mx-auto mt-2 max-w-md">
+        Try a broader search, or browse our <a href="/guides/" class="link">shopping guides</a> while we add more offers.
+      </p>
+      <button type="button" class="btn-ghost mt-6" data-clear-filters-empty>Clear filters</button>
+    </div>
+
+    <div class="mt-8 text-center" data-load-more-wrap hidden>
+      <button type="button" class="btn-ghost" data-load-more>Show more offers</button>
+    </div>
+
+    <p class="text-muted mt-10 text-center text-sm">
+      Expired offers are removed from this list automatically. <a href="/how-we-find-deals/" class="link">How we find and check deals</a>.
+    </p>
+  </div>
+
+  <script>
+    import { initDealBrowser } from '../../scripts/deal-browser';
+    initDealBrowser();
+  </script>
+</BaseLayout>

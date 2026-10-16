@@ -1,0 +1,25 @@
+---
+import Monogram from './Monogram.astro';
+import type { Merchant } from '../../lib/catalog';
+
+interface Props {
+  merchant: Merchant;
+  offerCount: number;
+  headingLevel?: 'h2' | 'h3';
+}
+const { merchant, offerCount, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<article class="card group relative flex items-start gap-4 p-5">
+  <Monogram name={merchant.data.name} />
+  <div class="min-w-0">
+    <Heading class="text-ink text-base font-semibold">
+      <a href={`/stores/${merchant.id}/`} class="after:absolute after:inset-0 hover:underline">{merchant.data.name}</a>
+    </Heading>
+    <p class="text-muted mt-0.5 text-sm">
+      {offerCount > 0 ? `${offerCount} ${offerCount === 1 ? 'offer' : 'offers'}` : 'Store guide'} · {merchant.data.domain}
+    </p>
+    <p class="text-ink-2 mt-2 line-clamp-2 text-sm leading-relaxed">{merchant.data.tagline}</p>
+  </div>
+</article>

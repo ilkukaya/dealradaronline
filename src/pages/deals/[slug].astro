@@ -1,0 +1,239 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import DealCard from '../../components/deals/DealCard.astro';
+import GuideCard from '../../components/ui/GuideCard.astro';
+import DealPriceCard from '../../components/deals/DealPriceCard.astro';
+import Monogram from '../../components/ui/Monogram.astro';
+import Icon from '../../components/ui/Icon.astro';
+import AdSlot from '../../components/integrations/AdSlot.astro';
+import ShareLinks from '../../components/ui/ShareLinks.astro';
+import { ogImageFor } from '../../lib/og';
+import { getCategory, getOfferType } from '../../config/taxonomy';
+import { networks } from '../../lib/affiliate/networks';
+import {
+  BUILD_TIME,
+  getDealsWithPages,
+  getMerchantMap,
+  getRelatedDeals,
+  getRelatedGuidesForDeal,
+  isActive,
+  isDealIndexable,
+  type Deal,
+} from '../../lib/catalog';
+import {
+  STALE_AFTER_DAYS,
+  daysBetween,
+  formatDate,
+  formatDateTime,
+  getLifecycle,
+} from '../../lib/deal-utils';
+
+export async function getStaticPaths() {
+  const deals = await getDealsWithPages();
+  return deals.map((deal) => ({ params: { slug: deal.id }, props: { deal } }));
+}
+
+const { deal } = Astro.props as { deal: Deal };
+const d = deal.data;
+const merchantMap = await getMerchantMap();
+const merchant = merchantMap.get(d.merchant)!;
+const lifecycle = getLifecycle(d, BUILD_TIME);
+const active = isActive(deal);
+const type = getOfferType(d.offerType);
+const category = getCategory(d.category);
+const stale = daysBetween(d.lastVerified, BUILD_TIME) > STALE_AFTER_DAYS;
+const [related, guides] = await Promise.all([getRelatedDeals(deal), getRelatedGuidesForDeal(deal)]);
+const otherFromStore = (await getDealsWithPages()).filter((x) => x.data.merchant === d.merchant && x.id !== deal.id && isActive(x));
+const paragraphs = d.editorialSummary.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+const sourceHost = new URL(d.sourceUrl).host.replace(/^www\./, '');
+
+const verificationText: Record<string, string> = {
+  'merchant-page': `An editor confirmed these terms on ${merchant.data.name}'s website.`,
+  'merchant-official-search': `We confirmed these terms against text published on ${sourceHost}, ${merchant.data.name}'s official website, as retrieved through a search index rather than a live page visit.`,
+  'network-feed': `Terms come from an authorized affiliate network feed for ${merchant.data.name}${d.affiliateNetwork ? ` (${networks[d.affiliateNetwork].name})` : ''}.`,
+  'merchant-communication': `Terms were provided to us directly by ${merchant.data.name}.`,
+};
+
+const metaDescription = `${d.description}`.slice(0, 158);
+---
+
+<BaseLayout
+  title={active ? d.title : `${d.title} (ended)`}
+  description={metaDescription}
+  canonicalPath={`/deals/${deal.id}/`}
+  noindex={!isDealIndexable(deal)}
+  type="article"
+  publishedTime={d.publishedAt}
+  modifiedTime={d.updatedAt ?? d.lastVerified}
+  image={ogImageFor('deals', deal.id)}
+>
+  <div class="border-line border-b bg-white">
+    <div class="container-page py-6">
+      <Breadcrumbs
+        items={[
+          { name: 'Deals', href: '/deals/' },
+          ...(category ? [{ name: category.name, href: `/categories/${category.slug}/` }] : []),
+          { name: d.title, href: `/deals/${deal.id}/` },
+        ]}
+      />
+    </div>
+  </div>
+
+  <div class="container-page py-8 sm:py-10" data-expires={active ? d.endDate?.toISOString() : undefined}>
+    {
+      d.fixture && (
+        <div class="bg-caution-soft text-caution mb-6 rounded-xl px-4 py-3 text-sm font-medium" role="note">
+          Development sample — this is not a real offer and is never published on the live site.
+        </div>
+      )
+    }
+
+    {
+      !active && (
+        <div class="border-line-strong bg-sand mb-6 rounded-xl border px-5 py-4" role="status">
+          <p class="text-ink font-semibold">
+            {lifecycle === 'upcoming' ? 'This offer has not started yet.' : 'This offer has ended.'}
+          </p>
+          <p class="text-ink-2 mt-1 text-sm">
+            {lifecycle === 'expired' && d.endDate ? `It ended on ${formatDate(d.endDate)}. ` : ''}
+            We keep this page for reference only. See <a href={`/stores/${merchant.id}/`} class="link">current {merchant.data.name} offers</a> or <a href="/deals/" class="link">all active deals</a>.
+          </p>
+        </div>
+      )
+    }
+    <div class="border-line-strong bg-sand mb-6 rounded-xl border px-5 py-4" role="status" data-expired-notice hidden>
+      <p class="text-ink font-semibold">This offer appears to have ended.</p>
+      <p class="text-ink-2 mt-1 text-sm">Its end date has passed since this page was last updated. See <a href="/deals/" class="link">active deals</a>.</p>
+    </div>
+
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <article class="min-w-0">
+        <div class="flex items-center gap-3">
+          <Monogram name={merchant.data.name} />
+          <div>
+            <a href={`/stores/${merchant.id}/`} class="text-ink font-semibold hover:underline">{merchant.data.name}</a>
+            <p class="text-muted text-sm">
+              {type && <a href={`/discounts/${type.slug}/`} class="hover:text-ink hover:underline">{type.name}</a>}
+              {category && <span> · {category.name}</span>}
+            </p>
+          </div>
+        </div>
+
+        <h1 class="display mt-5 text-[2rem] leading-tight font-semibold sm:text-[2.5rem]">{d.title}</h1>
+        <p class="text-ink-2 mt-4 text-lg leading-relaxed">{d.description}</p>
+
+        <p class="text-muted mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+          <span class="inline-flex items-center gap-1.5"><Icon name="clock" class="h-4 w-4" /> Last checked <time datetime={d.lastVerified.toISOString()}>{formatDateTime(d.lastVerified)}</time></span>
+          {d.endDate && <span class="inline-flex items-center gap-1.5"><Icon name="calendar" class="h-4 w-4" /> Ends {formatDate(d.endDate)}</span>}
+          {!d.endDate && active && <span class="inline-flex items-center gap-1.5"><Icon name="calendar" class="h-4 w-4" /> No end date announced</span>}
+        </p>
+
+        <DealPriceCard deal={deal} merchant={merchant} active={active} placement="deal-top-mobile" class="mt-6 lg:hidden" />
+
+        {
+          stale && active && (
+            <p class="bg-caution-soft text-caution mt-5 rounded-xl px-4 py-3 text-sm">
+              We last checked this offer more than {STALE_AFTER_DAYS} days ago. Terms may have changed — confirm on {merchant.data.name}'s site before you buy.
+            </p>
+          )
+        }
+
+        {
+          d.eligibility && (
+            <section class="mt-10" aria-labelledby="who">
+              <h2 id="who" class="display text-2xl font-semibold">Who qualifies</h2>
+              <p class="text-ink-2 mt-3 leading-relaxed">{d.eligibility}</p>
+            </section>
+          )
+        }
+
+        {
+          d.restrictions.length > 0 && (
+            <section class="mt-10" aria-labelledby="terms">
+              <h2 id="terms" class="display text-2xl font-semibold">Restrictions and fine print</h2>
+              <ul class="mt-4 space-y-3">
+                {d.restrictions.map((r) => (
+                  <li class="text-ink-2 flex gap-3 leading-relaxed">
+                    <Icon name="info" class="text-accent-strong mt-1 h-4.5 w-4.5 shrink-0" />
+                    <span>{r}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        <section class="mt-10" aria-labelledby="take">
+          <h2 id="take" class="display text-2xl font-semibold">Our take</h2>
+          <div class="prose-editorial mt-3">
+            {paragraphs.map((p) => <p>{p}</p>)}
+          </div>
+        </section>
+
+        <div class="mt-8"><ShareLinks path={`/deals/${deal.id}/`} title={d.title} pinImage={ogImageFor('deals', deal.id)} /></div>
+
+        <section class="bg-navy-soft/60 mt-10 rounded-2xl p-5 sm:p-6" aria-labelledby="checked">
+          <h2 id="checked" class="text-ink flex items-center gap-2 font-semibold"><Icon name="shield" class="h-5 w-5" /> How we checked this offer</h2>
+          <p class="text-ink-2 mt-2 text-[0.95rem] leading-relaxed">{verificationText[d.verificationMethod]}</p>
+          <dl class="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            <div><dt class="text-muted">Source</dt><dd><a href={d.sourceUrl} rel="nofollow noopener" target="_blank" class="link break-all">{sourceHost}</a></dd></div>
+            <div><dt class="text-muted">Last checked</dt><dd class="text-ink">{formatDateTime(d.lastVerified)}</dd></div>
+            <div><dt class="text-muted">Added</dt><dd class="text-ink">{formatDate(d.publishedAt)}</dd></div>
+            {d.startDate && <div><dt class="text-muted">Starts</dt><dd class="text-ink">{formatDate(d.startDate)}</dd></div>}
+          </dl>
+          <p class="text-muted mt-4 text-xs leading-relaxed">
+            Stores can change prices and terms at any time. The store's checkout page is the final word. Spotted a problem? <a href="/contact/?topic=deal-problem" class="link">Tell us</a>.
+          </p>
+        </section>
+
+        {
+          guides.length > 0 && (
+            <section class="mt-12" aria-labelledby="read">
+              <h2 id="read" class="display text-2xl font-semibold">Before you buy</h2>
+              <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                {guides.map((g) => <GuideCard guide={g} />)}
+              </div>
+            </section>
+          )
+        }
+      </article>
+
+      <aside class="lg:sticky lg:top-24 lg:self-start" aria-label="Offer summary">
+        <DealPriceCard deal={deal} merchant={merchant} active={active} placement="deal-sidebar" class="hidden lg:block" />
+
+        <dl class="card mt-4 divide-line divide-y px-5 text-sm">
+          <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Store</dt><dd><a href={`/stores/${merchant.id}/`} class="text-ink font-medium hover:underline">{merchant.data.name}</a></dd></div>
+          {type && <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Type</dt><dd class="text-ink text-right">{type.name}</dd></div>}
+          {category && <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Category</dt><dd class="text-right"><a href={`/categories/${category.slug}/`} class="text-ink hover:underline">{category.name}</a></dd></div>}
+          <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Ends</dt><dd class="text-ink text-right">{d.endDate ? formatDate(d.endDate) : 'Not announced'}</dd></div>
+          <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Last checked</dt><dd class="text-ink text-right">{formatDate(d.lastVerified)}</dd></div>
+        </dl>
+      </aside>
+    </div>
+
+    <AdSlot id="deal-bottom" />
+
+    {
+      otherFromStore.length > 0 && (
+        <section class="mt-14" aria-labelledby="more-store">
+          <h2 id="more-store" class="display text-2xl font-semibold">More from {merchant.data.name}</h2>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {otherFromStore.slice(0, 3).map((x) => <DealCard deal={x} merchant={merchant} />)}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      related.filter((r) => r.data.merchant !== d.merchant).length > 0 && (
+        <section class="mt-14" aria-labelledby="alternatives">
+          <h2 id="alternatives" class="display text-2xl font-semibold">Similar offers</h2>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {related.filter((r) => r.data.merchant !== d.merchant).map((x) => <DealCard deal={x} merchant={merchantMap.get(x.data.merchant)!} />)}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

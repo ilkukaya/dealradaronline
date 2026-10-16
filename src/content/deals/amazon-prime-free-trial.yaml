@@ -1,0 +1,24 @@
+title: "Amazon Prime 30-day free trial for eligible new members"
+merchant: amazon
+category: memberships
+offerType: trial
+description: Eligible new members can try Amazon Prime free for 30 days. Afterward Prime costs $14.99 a month or $139 a year.
+editorialSummary: |-
+  A Prime trial makes the most sense when you have a specific reason to use it — a large order you want delivered quickly, or a season of heavier shopping. Thirty days is enough time to see whether you would use Prime regularly.
+
+  Not every account is offered a trial, and trials convert to a paid plan automatically. Before you start one, check whether you qualify for a cheaper plan: students and adults aged 18–24, and people receiving government assistance, have discounted options.
+eligibility: Eligible new Prime members. Amazon does not offer a trial to every account.
+restrictions:
+  - Converts automatically to a paid membership when the trial ends unless you cancel.
+  - The annual plan is $139/year after the trial.
+  - Discounted Prime plans exist for young adults, students, and assistance recipients.
+price: 14.99
+pricePeriod: month
+priceNote: after the 30-day trial
+merchantUrl: https://www.amazon.com/amazonprime
+sourceUrl: https://www.amazon.com/amazonprime
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+tags: [prime, free trial]

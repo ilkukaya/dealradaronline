@@ -1,0 +1,22 @@
+# DEVELOPMENT FIXTURE — not a real offer. Never shown in production builds.
+title: "Sample: Wireless headphones price drop (development fixture)"
+merchant: amazon
+category: electronics-tech
+offerType: sale
+description: Sample data used to preview how a priced deal with a reference price and coupon code renders. Not a real offer.
+editorialSummary: |-
+  This entry exists only so developers can preview the price, reference price, discount, and coupon layouts. It is excluded from production builds and marked noindex.
+restrictions:
+  - Sample restriction text.
+price: 79.99
+referencePrice: 129.99
+referencePriceNote: Sample reference price
+couponCode: SAMPLE10
+merchantUrl: https://www.example.com/sample-headphones
+sourceUrl: https://www.example.com/sample-headphones
+verificationMethod: merchant-page
+lastVerified: 2026-10-15T09:00:00-04:00
+publishedAt: 2026-10-15T09:00:00-04:00
+endDate: 2026-12-31T23:59:00-05:00
+status: published
+fixture: true

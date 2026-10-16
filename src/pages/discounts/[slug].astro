@@ -1,0 +1,25 @@
+---
+import OfferCollection from '../../components/deals/OfferCollection.astro';
+import { getOfferTypesWithContent, type OfferTypeWithContent } from '../../lib/catalog';
+
+export async function getStaticPaths() {
+  const programs = await getOfferTypesWithContent();
+  return programs.map((program) => ({ params: { slug: program.slug }, props: { program, all: programs } }));
+}
+const { program, all } = Astro.props as { program: OfferTypeWithContent; all: OfferTypeWithContent[] };
+const short = (p: OfferTypeWithContent) => (p.slug === 'assistance' ? 'Assistance discounts' : p.name);
+---
+
+<OfferCollection
+  title={program.name}
+  metaTitle={`${program.name} (${new Date().getFullYear()}): Who Qualifies & Fine Print`}
+  metaDescription={program.description.slice(0, 160)}
+  intro={program.description}
+  path={`/discounts/${program.slug}/`}
+  crumbs={[{ name: 'Discounts', href: '/discounts/' }, { name: short(program), href: `/discounts/${program.slug}/` }]}
+  deals={program.deals}
+  guides={program.guides}
+  eyebrow="Discount program"
+  showComparison
+  siblings={all.map((p) => ({ href: `/discounts/${p.slug}/`, label: short(p) }))}
+/>

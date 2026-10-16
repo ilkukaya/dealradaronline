@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import { getOfferTypesWithContent } from '../../lib/catalog';
+
+const programs = await getOfferTypesWithContent();
+---
+
+<BaseLayout title="Discount Programs: Student, Military, Free Trials & More" description="Standing discounts grouped by who qualifies — students, military families, government assistance recipients — plus free trials and free shipping offers." canonicalPath="/discounts/">
+  <div class="border-line border-b bg-white">
+    <div class="container-page py-8 sm:py-10">
+      <Breadcrumbs items={[{ name: 'Discounts', href: '/discounts/' }]} />
+      <h1 class="display mt-4 text-4xl font-semibold">Discount programs</h1>
+      <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">
+        Many of the best savings are standing programs, not flash sales. They're grouped here by who qualifies or what kind of saving they are.
+      </p>
+    </div>
+  </div>
+  <div class="container-page grid gap-4 py-10 md:grid-cols-2">
+    {
+      programs.map((p) => (
+        <a href={`/discounts/${p.slug}/`} class="card group block p-6 no-underline hover:shadow-[var(--shadow-lift)]">
+          <h2 class="display text-ink text-2xl font-semibold group-hover:underline">{p.name}</h2>
+          <p class="text-ink-2 mt-2 leading-relaxed">{p.description}</p>
+          <p class="text-accent-strong mt-3 text-sm font-semibold">{p.deals.length} active offers</p>
+        </a>
+      ))
+    }
+  </div>
+</BaseLayout>

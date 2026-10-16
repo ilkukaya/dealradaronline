@@ -1,0 +1,66 @@
+---
+/** Price, promo code, store button, and link disclosure for a deal page. */
+import OutboundButton from './OutboundButton.astro';
+import Icon from '../ui/Icon.astro';
+import { formatPriceWithPeriod, getDiscountPercent, getHeadline, isAffiliateLink } from '../../lib/deal-utils';
+import type { Deal, Merchant } from '../../lib/catalog';
+
+interface Props {
+  deal: Deal;
+  merchant: Merchant;
+  active: boolean;
+  placement: string;
+  class?: string;
+}
+const { deal, merchant, active, placement, class: className = '' } = Astro.props;
+const d = deal.data;
+const headline = getHeadline(d);
+const pct = getDiscountPercent(d);
+const affiliate = isAffiliateLink(d);
+---
+
+<div class:list={['card p-5 sm:p-6', className]}>
+{
+      active ? (
+        <>
+          <p class="text-ink text-3xl font-bold tracking-tight">{headline.value}</p>
+          {headline.note && <p class="text-muted mt-1 text-sm">{headline.note}</p>}
+          {d.referencePrice !== undefined && (
+            <p class="text-ink-2 mt-3 text-sm">
+              Regular price <s>{formatPriceWithPeriod(d.referencePrice, d.pricePeriod)}</s>
+              {pct !== undefined && <span class="bg-accent-soft text-accent-deep ml-2 rounded-full px-2 py-0.5 text-xs font-bold">{pct}% off</span>}
+            </p>
+          )}
+          {d.referencePriceNote && <p class="text-muted mt-1 text-xs">{d.referencePriceNote}.</p>}
+
+          {d.couponCode && (
+            <div class="border-accent-line bg-accent-soft mt-5 flex items-center justify-between gap-3 rounded-xl border border-dashed px-4 py-3">
+              <div>
+                <p class="text-muted text-xs font-semibold tracking-wide uppercase">Promo code</p>
+                <p class="text-ink font-mono text-lg font-bold">{d.couponCode}</p>
+              </div>
+              <button type="button" class="btn-ghost !min-h-9 !px-3 !text-sm" data-copy={d.couponCode}>
+                <Icon name="copy" class="h-4 w-4" /> <span data-copy-label>Copy code</span>
+              </button>
+            </div>
+          )}
+
+          <div class="mt-5" data-active-only>
+            <OutboundButton deal={deal} merchant={merchant} placement={placement} class="w-full sm:w-full" />
+          </div>
+          <p class="text-muted mt-3 text-xs leading-relaxed">
+            {affiliate
+              ? `Affiliate link: we may earn a commission if you buy through it, at no extra cost to you. It doesn't affect which offers we list.`
+              : `This link goes straight to ${merchant.data.domain}. We don't earn a commission from it.`}{' '}
+            <a href="/affiliate-disclosure/" class="underline underline-offset-2">Disclosure</a>
+          </p>
+        </>
+      ) : (
+        <>
+          <p class="text-ink text-lg font-semibold">Offer no longer active</p>
+          <p class="text-ink-2 mt-2 text-sm">Prices and terms shown on this page are out of date.</p>
+          <a href={`/stores/${merchant.id}/`} class="btn-dark mt-5 w-full">See {merchant.data.name} offers</a>
+        </>
+      )
+    }
+  </div>

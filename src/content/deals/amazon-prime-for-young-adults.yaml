@@ -1,0 +1,28 @@
+title: "Amazon Prime for Young Adults: 6-month trial, then half-price Prime"
+merchant: amazon
+category: memberships
+offerType: student
+description: College students and adults aged 18–24 can try Prime free for six months, then pay $7.49 a month instead of the standard $14.99.
+editorialSummary: |-
+  This is the plan formerly called Prime Student, and it is now open to anyone aged 18 to 24 as well as college students. If you already order from Amazon a few times a month, the half-price rate is one of the easiest recurring savings to claim: the six-month trial costs nothing, and the reduced price continues for up to four years in total.
+
+  The catch is the same as any trial — it renews automatically. Decide before the six months are up whether you use Prime enough to pay for it, and put a reminder on your calendar.
+eligibility: College students (verified by school email or enrollment) or adults aged 18–24 (verified by ID).
+restrictions:
+  - The six-month trial is for new members; afterward the plan renews at $7.49/month unless canceled.
+  - An annual option is available at $69/year.
+  - The reduced rate lasts up to four years in total, including the trial.
+  - Requires student-status or age verification.
+price: 7.49
+pricePeriod: month
+priceNote: after the 6-month trial
+referencePrice: 14.99
+referencePriceNote: Standard Prime monthly price, as stated by Amazon
+merchantUrl: https://www.amazon.com/amazonprime?primeCampaignId=studentWlpPrimeRedir
+sourceUrl: https://www.amazon.com/amazonprime?primeCampaignId=studentWlpPrimeRedir
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+featured: true
+tags: [prime, students, young adults]

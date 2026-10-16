@@ -1,0 +1,98 @@
+---
+import Logo from '../ui/Logo.astro';
+import Icon from '../ui/Icon.astro';
+import { site } from '../../config/site';
+import { getOfferTypesWithContent, getPublishedMerchants, getActiveDeals } from '../../lib/catalog';
+
+const [programs, merchants, active] = await Promise.all([getOfferTypesWithContent(), getPublishedMerchants(), getActiveDeals()]);
+const storesWithOffers = merchants.filter((m) => active.some((d) => d.data.merchant === m.id)).slice(0, 6);
+const year = new Date().getFullYear();
+const socials = Object.entries(site.social).filter(([, url]) => url);
+const socialNames: Record<string, string> = { x: 'X', pinterest: 'Pinterest', facebook: 'Facebook', instagram: 'Instagram', threads: 'Threads' };
+
+const columns = [
+  {
+    title: 'Deals',
+    links: [{ href: '/deals/', label: 'All deals' }, ...programs.map((p) => ({ href: `/discounts/${p.slug}/`, label: p.label === 'Free trial' ? 'Free trials' : p.name.replace('Discounts for Government Assistance Recipients', 'Assistance discounts') }))],
+  },
+  {
+    title: 'Stores',
+    links: [{ href: '/stores/', label: 'All stores' }, ...storesWithOffers.map((m) => ({ href: `/stores/${m.id}/`, label: m.data.name }))],
+  },
+  {
+    title: 'Company',
+    links: [
+      { href: '/about/', label: 'About' },
+      { href: '/how-we-find-deals/', label: 'How we find deals' },
+      { href: '/editorial-policy/', label: 'Editorial policy' },
+      { href: '/guides/', label: 'Shopping guides' },
+      { href: '/partners/', label: 'Work with us' },
+      { href: '/contact/', label: 'Contact' },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { href: '/affiliate-disclosure/', label: 'Affiliate disclosure' },
+      { href: '/privacy/', label: 'Privacy policy' },
+      { href: '/cookies/', label: 'Cookie policy' },
+      { href: '/terms/', label: 'Terms of use' },
+    ],
+  },
+];
+---
+
+<footer class="bg-ink mt-20 text-white/80">
+  <div class="container-page grid gap-12 py-14 lg:grid-cols-[1.3fr_2fr]">
+    <div class="max-w-sm">
+      <Logo inverted />
+      <p class="mt-4 text-[0.95rem] leading-relaxed text-white/70">
+        {site.tagline} An independent US deal discovery site. Every offer lists its restrictions and the date we last checked it.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="/newsletter/" class="btn-primary !min-h-10 !text-sm"><Icon name="mail" class="h-4 w-4" /> Email updates</a>
+        <a href="/rss.xml" class="btn !min-h-10 border border-white/25 !text-sm text-white hover:border-white"><Icon name="rss" class="h-4 w-4" /> RSS</a>
+      </div>
+      {
+        socials.length > 0 && (
+          <ul class="mt-6 flex flex-wrap gap-4 text-sm">
+            {socials.map(([key, url]) => (
+              <li>
+                <a href={url} rel="me noopener" class="text-white/80 underline-offset-2 hover:text-white hover:underline">
+                  {socialNames[key] ?? key}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+    <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
+      {
+        columns.map((col) => (
+          <nav aria-label={col.title}>
+            <h2 class="text-sm font-semibold tracking-wide text-white">{col.title}</h2>
+            <ul class="mt-4 space-y-2.5 text-[0.92rem]">
+              {col.links.map((l) => (
+                <li>
+                  <a href={l.href} class="text-white/70 no-underline hover:text-white hover:underline">
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="container-page space-y-2 py-6 text-[0.8rem] leading-relaxed text-white/55">
+      <p>
+        {site.name} is an independent publication. It is not affiliated with, endorsed by, or sponsored by the stores it covers unless a page says so.
+        Store names and trademarks belong to their respective owners. Prices and terms can change at any time — always confirm the final price at checkout.
+      </p>
+      <p>© {site.foundedYear === year ? year : `${site.foundedYear}–${year}`} {site.name}. Times shown in US Eastern Time.</p>
+    </div>
+  </div>
+</footer>

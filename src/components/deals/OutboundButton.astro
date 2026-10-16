@@ -1,0 +1,44 @@
+---
+/**
+ * The only component that renders links to merchants. It decides between an
+ * approved affiliate URL and the plain merchant URL, applies the right rel
+ * attributes, and tags the link for click measurement.
+ */
+import Icon from '../ui/Icon.astro';
+import { getOutboundLink } from '../../lib/deal-utils';
+import type { Deal, Merchant } from '../../lib/catalog';
+
+interface Props {
+  deal: Deal;
+  merchant: Merchant;
+  placement: string;
+  variant?: 'primary' | 'ghost' | 'text';
+  label?: string;
+  class?: string;
+}
+const { deal, merchant, placement, variant = 'primary', label, class: className = '' } = Astro.props;
+const link = getOutboundLink(deal.data);
+const text = label ?? `Go to ${merchant.data.name}`;
+const classes = {
+  primary: 'btn-primary w-full sm:w-auto',
+  ghost: 'btn-ghost',
+  text: 'link inline-flex items-center gap-1 text-sm',
+}[variant];
+---
+
+<a
+  href={link.href}
+  rel={link.rel}
+  target="_blank"
+  referrerpolicy={link.kind === 'affiliate' ? 'no-referrer-when-downgrade' : 'strict-origin-when-cross-origin'}
+  data-outbound
+  data-deal={deal.id}
+  data-merchant={merchant.id}
+  data-link-kind={link.kind}
+  data-placement={placement}
+  class:list={[classes, className]}
+>
+  {text}
+  <Icon name="external" class={variant === 'text' ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
+  <span class="sr-only">(opens {merchant.data.name} in a new tab{link.kind === 'affiliate' ? '; affiliate link' : ''})</span>
+</a>

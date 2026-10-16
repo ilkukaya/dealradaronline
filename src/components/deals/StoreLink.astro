@@ -1,0 +1,28 @@
+---
+/** Link to a store's homepage (not tied to a specific offer). Direct link, measured like other outbound links. */
+import Icon from '../ui/Icon.astro';
+import type { Merchant } from '../../lib/catalog';
+
+interface Props {
+  merchant: Merchant;
+  placement: string;
+  class?: string;
+}
+const { merchant, placement, class: className = 'btn-ghost' } = Astro.props;
+---
+
+<a
+  href={merchant.data.websiteUrl}
+  rel="nofollow noopener"
+  target="_blank"
+  data-outbound
+  data-deal=""
+  data-merchant={merchant.id}
+  data-link-kind="direct"
+  data-placement={placement}
+  class={className}
+>
+  Visit {merchant.data.domain}
+  <Icon name="external" class="h-4 w-4" />
+  <span class="sr-only">(opens in a new tab)</span>
+</a>

@@ -1,0 +1,25 @@
+---
+/**
+ * Placeholder for future display advertising. Renders nothing unless
+ * PUBLIC_ADS_ENABLED=true AND an ad network has approved the site.
+ * When enabled, the slot is clearly labeled and reserves its height to avoid
+ * layout shift. Never place ads where they could be mistaken for deals or CTAs.
+ */
+import { features } from '../../config/site';
+
+interface Props {
+  id: string;
+  /** Reserved height in px to prevent layout shift. */
+  minHeight?: number;
+}
+const { id, minHeight = 250 } = Astro.props;
+---
+
+{
+  features.adsEnabled && (
+    <aside class="my-10" aria-label="Advertisement" data-ad-slot={id}>
+      <p class="text-faint mb-1 text-center text-[0.7rem] tracking-widest uppercase">Advertisement</p>
+      <div class="bg-sand rounded-xl" style={`min-height:${minHeight}px`} />
+    </aside>
+  )
+}

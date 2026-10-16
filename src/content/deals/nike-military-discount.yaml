@@ -1,0 +1,22 @@
+title: "Nike military discount: 10% off most items online and in stores"
+merchant: nike
+category: fashion
+offerType: military
+description: Active, reservist, veteran, and retired US military personnel — and spouses and dependents of active personnel — get 10% off most items at Nike.
+editorialSummary: |-
+  Nike's military discount covers most products on Nike.com and in Nike stores, which makes it a dependable saving on running shoes and training gear that rarely go on deep sale.
+
+  It applies to most items rather than everything, and Nike's discount programs generally cannot be combined with other promo codes. Check the final price in your cart before you order.
+eligibility: Active, reservist, veteran, and retired US military personnel, plus spouses and dependents of active personnel.
+restrictions:
+  - Applies to most items, not all.
+  - Military status verification is required.
+  - Generally cannot be combined with other promo codes.
+statedPercentOff: 10
+merchantUrl: https://www.nike.com/help/a/military-discount
+sourceUrl: https://www.nike.com/help/a/military-discount
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+tags: [military, shoes, apparel]

@@ -1,0 +1,69 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { POLICY_DATES } from '../config/policies';
+import { linkMonetization, site } from '../config/site';
+import { getPublishedMerchants, merchantHasApprovedProgram, BUILD_TIME } from '../lib/catalog';
+import { networks } from '../lib/affiliate/networks';
+import { formatDate } from '../lib/deal-utils';
+
+const merchants = await getPublishedMerchants();
+const affiliateMerchants = merchants.filter(merchantHasApprovedProgram);
+const amazonAssociate = merchants.some((m) => m.id === 'amazon' && m.data.affiliatePrograms.some((p) => p.network === 'direct' && p.status === 'approved'));
+const scriptNetwork = linkMonetization.skimlinksPublisherId ? networks.skimlinks.name : linkMonetization.sovrnCommerceKey ? networks.sovrn.name : '';
+---
+
+<PageLayout
+  title="Affiliate Disclosure"
+  description={`How ${site.name} may earn money from links to stores, how affiliate links are labeled, and how commissions are kept separate from editorial decisions.`}
+  dek="Plain-language disclosure of how this site may make money, in line with the FTC's Endorsement Guides."
+  updated={POLICY_DATES.affiliate}
+  path="/affiliate-disclosure/"
+>
+  <h2>The short version</h2>
+  <p>
+    {site.name} may earn a commission when you click a link to a store and make a purchase. That commission is paid by the store or its affiliate network, not by you, and it doesn't change the price you pay. Commissions never decide which offers we list or how we describe them.
+  </p>
+
+  <h2>Our current status</h2>
+  {
+    affiliateMerchants.length === 0 && !scriptNetwork ? (
+      <p>
+        As of {formatDate(BUILD_TIME)}, we don't have active affiliate relationships with the stores on this site, so links to stores are ordinary links and we don't earn anything from them. We are applying to affiliate programs. When a store's links become affiliate links, its offer pages will say so next to the link, and this section will be updated.
+      </p>
+    ) : (
+      <>
+        <p>As of {formatDate(BUILD_TIME)}, links to the following stores may be affiliate links:</p>
+        <ul>
+          {affiliateMerchants.map((m) => (
+            <li>{m.data.name}</li>
+          ))}
+          {scriptNetwork && <li>Other eligible stores, through {scriptNetwork}, which automatically converts some ordinary store links into affiliate links.</li>}
+        </ul>
+        <p>Each offer page states whether its “Go to store” button is an affiliate link.</p>
+      </>
+    )
+  }
+  {amazonAssociate && <p><strong>As an Amazon Associate, we earn from qualifying purchases.</strong></p>}
+
+  <h2>How affiliate links work</h2>
+  <p>
+    When you click an affiliate link, the store or network records that the visit came from {site.name}, usually with a cookie or a tracking parameter on the store's side. If you buy within the period the store allows, we may receive a commission. The store's own privacy policy governs any data it collects.
+  </p>
+
+  <h2>How we label links</h2>
+  <ul>
+    <li>Every offer page has a note next to its main button saying whether it's an affiliate link.</li>
+    <li>Affiliate links are marked with <code>rel="sponsored"</code> so search engines know they're commercial.</li>
+    <li>A short notice at the top of every page links here.</li>
+  </ul>
+
+  <h2>What commissions don't affect</h2>
+  <ul>
+    <li>Whether an offer is listed — we list offers we can confirm, whether or not they pay us.</li>
+    <li>How offers are ordered — listings are sorted by date added unless you choose another sort.</li>
+    <li>What we write about restrictions and catches.</li>
+  </ul>
+
+  <h2>Questions</h2>
+  <p>If anything about how we make money is unclear, <a href="/contact/">contact us</a>.</p>
+</PageLayout>

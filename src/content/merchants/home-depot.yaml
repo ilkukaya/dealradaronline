@@ -1,0 +1,24 @@
+name: The Home Depot
+domain: homedepot.com
+websiteUrl: https://www.homedepot.com/
+status: published
+categories: [home-kitchen]
+tagline: Home-improvement retailer with a year-round 10% military discount and a long standard return window.
+overview: |-
+  The Home Depot sells tools, building materials, appliances, garden supplies, and home décor online and in stores across the US. Prices are often set by local store, so the same item can cost a little more or less depending on the ZIP code you shop from.
+
+  The store offers an everyday discount for eligible military members, veterans, and their spouses after a one-time online verification. Return rules are generous for most merchandise but much shorter for major appliances, which is worth knowing before a large purchase.
+tips:
+  - Set your local store before comparing prices — many prices and stock levels are store-specific.
+  - Major appliances have a very short return window. Inspect them at delivery.
+  - Buying with a Home Depot credit card extends the return window, but only use store credit if you would have bought the item anyway.
+facts:
+  - label: Standard returns
+    value: Most merchandise can be returned within 90 days with proof of purchase. Major appliances must be returned within 48 hours; some categories such as TVs, computers, and furniture have 30 days.
+    sourceUrl: https://www.homedepot.com/c/Return_Policy
+    checkedAt: 2026-10-16
+  - label: Card-purchase returns
+    value: Purchases made with a Home Depot consumer or commercial credit card can be returned within 365 days, with the same category exceptions.
+    sourceUrl: https://www.homedepot.com/c/Return_Policy
+    checkedAt: 2026-10-16
+affiliatePrograms: []

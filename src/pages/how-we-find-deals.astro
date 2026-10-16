@@ -1,0 +1,67 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { POLICY_DATES } from '../config/policies';
+import { site } from '../config/site';
+import { STALE_AFTER_DAYS } from '../lib/deal-utils';
+---
+
+<PageLayout
+  title="How We Find and Check Deals"
+  description={`How ${site.name} finds offers, confirms terms on official store pages, labels verification dates, and removes expired deals.`}
+  dek="What we list, where the information comes from, and what “last checked” actually means."
+  updated={POLICY_DATES.howWeFind}
+  path="/how-we-find-deals/"
+>
+  <h2>What we look for</h2>
+  <p>We prioritize offers that save real money for a lot of people and that a store publishes openly:</p>
+  <ul>
+    <li>Standing discount programs — student, military, teacher, and first-responder pricing.</li>
+    <li>Reduced-price memberships for people who receive government assistance.</li>
+    <li>Free trials, with the price you'll pay when the trial ends.</li>
+    <li>Free-shipping thresholds and membership shipping perks.</li>
+    <li>Sales and promo codes, when we can confirm the terms.</li>
+  </ul>
+
+  <h2>Where the information comes from</h2>
+  <p>
+    We confirm terms against the store's own website — its offer page, help center, or policy pages — and link to that source on every offer. When we join an affiliate network, we may also receive offer data through the network's authorized feeds; those offers are labeled as such. We don't copy offers from coupon aggregator sites, and we don't publish codes we can't confirm.
+  </p>
+  <p>Each offer page shows which method we used:</p>
+  <ul>
+    <li><strong>Merchant page</strong> — an editor read the terms directly on the store's site.</li>
+    <li><strong>Official site via search index</strong> — the terms were confirmed from text published on the store's own domain, retrieved through a search index rather than a live page visit. We use this when a store's pages can't be loaded directly by our tools, and we say so on the page.</li>
+    <li><strong>Network feed</strong> — terms supplied by an authorized affiliate network.</li>
+    <li><strong>Merchant communication</strong> — terms provided by the store directly.</li>
+  </ul>
+
+  <h2>What “last checked” means</h2>
+  <p>
+    The “last checked” date is the last time we confirmed the offer's main terms — price, eligibility, and key restrictions. Dates and times are shown in US Eastern Time. If an offer hasn't been rechecked in more than {STALE_AFTER_DAYS} days, the page shows a reminder to confirm the terms before you buy.
+  </p>
+
+  <h2>Prices and discounts</h2>
+  <ul>
+    <li>We show a price only when we've confirmed it.</li>
+    <li>We show a “regular price” only when the store itself states it — for example, the standard membership price shown next to a student price. We don't use manufacturer list prices we can't verify.</li>
+    <li>Discount percentages are calculated from those two numbers and rounded down, so we never overstate a saving.</li>
+    <li>We don't publish price histories, ratings, or reviews we haven't produced ourselves.</li>
+  </ul>
+
+  <h2>When offers end</h2>
+  <p>
+    If a store announces an end date, it's shown on the offer. The site is rebuilt regularly, and offers past their end date are removed from listings automatically; your browser also hides an offer whose end date passes between updates. Pages for ended offers stay online only so old links still work, and they clearly say the offer has ended.
+  </p>
+
+  <h2>What we won't do</h2>
+  <ul>
+    <li>Invent discounts, “was” prices, coupon codes, or deadlines.</li>
+    <li>Use fake scarcity like “only 3 left” or countdown timers.</li>
+    <li>Publish fake reviews, ratings, or testimonials.</li>
+    <li>Accept payment to describe an offer more favorably.</li>
+  </ul>
+
+  <h2>Corrections</h2>
+  <p>
+    Stores change their terms, and we make mistakes. If something on an offer page is wrong, please <a href="/contact/?topic=deal-problem">tell us</a> and we'll recheck it. See also our <a href="/editorial-policy/">editorial policy</a>.
+  </p>
+</PageLayout>

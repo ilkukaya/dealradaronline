@@ -1,0 +1,24 @@
+name: Walmart
+domain: walmart.com
+websiteUrl: https://www.walmart.com/
+status: published
+categories: [memberships, home-kitchen, electronics-tech]
+tagline: Nationwide big-box retailer with a large online marketplace and the Walmart+ membership, including half-price plans.
+overview: |-
+  Walmart combines thousands of US stores with an online marketplace where many listings come from third-party sellers. Store pickup is often free, which makes Walmart useful when you need an item quickly and do not want to meet a shipping minimum.
+
+  Walmart+ is the store's paid membership, covering perks such as free delivery on qualifying orders. Walmart offers the membership at half price to college students and to people who receive certain government benefits, so it is worth checking eligibility before paying the full monthly rate.
+tips:
+  - Marketplace items sold by third-party sellers can have different shipping times and return rules than items sold by Walmart.
+  - Store pickup and same-day options vary by location. Enter your ZIP code before comparing prices — online prices can also vary by area.
+  - If you already pay full price for Walmart+ and later qualify for Walmart+ Assist, check Walmart's terms for how the price change is applied.
+facts:
+  - label: Standard returns
+    value: Most items can be returned within 90 days of purchase or receipt, unless an exception applies. Returns can be made by mail, home pickup, or in store.
+    sourceUrl: https://www.walmart.com/help/article/walmart-standard-return-policy/adc0dfb692954e67a4de206fb8d9e03a
+    checkedAt: 2026-10-16
+  - label: Walmart+ membership price
+    value: Walmart+ is $12.95 per month or $98 per year, plus applicable tax.
+    sourceUrl: https://www.walmart.com/plus
+    checkedAt: 2026-10-16
+affiliatePrograms: []

@@ -1,0 +1,10 @@
+---
+/** Renders one or more schema.org objects. Only describe facts visible on the page. */
+interface Props {
+  data: Record<string, unknown> | Record<string, unknown>[];
+}
+const { data } = Astro.props;
+const json = JSON.stringify(Array.isArray(data) ? data : data).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" is:inline set:html={json} />

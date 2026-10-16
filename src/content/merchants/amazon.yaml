@@ -1,0 +1,25 @@
+name: Amazon
+domain: amazon.com
+websiteUrl: https://www.amazon.com/
+status: published
+categories: [memberships, electronics-tech, home-kitchen]
+tagline: The largest US online marketplace, with Prime membership plans for students, young adults, and assistance recipients.
+overview: |-
+  Amazon sells products directly and through millions of independent third-party sellers on the same marketplace. That distinction matters for deal hunters: prices, shipping speed, and return handling can differ depending on whether an item is "shipped and sold by Amazon" or by an outside seller, so check the seller line on the product page before you buy.
+
+  Most of the savings worth tracking at Amazon are not one-day coupons but membership pricing. Prime has a standard price, a half-price plan for students and young adults, and a reduced plan (Prime Access) for people who receive qualifying government assistance. If you shop on Amazon regularly and fall into one of those groups, the discounted plan is usually the single biggest saving available.
+tips:
+  - Look at the "Ships from" and "Sold by" lines. Third-party sellers can set their own return terms within Amazon's rules.
+  - Prime trials renew automatically. Set a reminder a few days before the trial ends if you are not sure you want to keep it.
+  - Compare the unit price (price per ounce, per count) shown under many grocery and household listings instead of the package price.
+  - Strikethrough "List Price" labels are set by the listing, not by us. Read our guide on judging whether a discount is real before relying on them.
+facts:
+  - label: Standard returns
+    value: Most items shipped from Amazon.com can be returned within 30 days of delivery. Some categories and third-party sellers have exceptions.
+    sourceUrl: https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7
+    checkedAt: 2026-10-16
+  - label: Prime membership price
+    value: Prime is $14.99 per month or $139 per year after any free trial.
+    sourceUrl: https://www.amazon.com/amazonprime
+    checkedAt: 2026-10-16
+affiliatePrograms: []

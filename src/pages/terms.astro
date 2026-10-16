@@ -1,0 +1,77 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { POLICY_DATES } from '../config/policies';
+import { operatorName, owner, site } from '../config/site';
+---
+
+<PageLayout
+  title="Terms of Use"
+  description={`The terms that apply when you use ${site.name}, including how to read prices and offers and the limits of our responsibility.`}
+  dek="The ground rules for using this website."
+  updated={POLICY_DATES.terms}
+  path="/terms/"
+>
+  <p>
+    These terms apply to your use of {site.domain} (the “site”), operated by {operatorName} (“we,” “us”). By using the site you agree to them. If you don't agree, please don't use the site.
+  </p>
+
+  <h2>What the site is</h2>
+  <p>
+    {site.name} publishes information about offers, discounts, and store policies from third-party retailers, along with general shopping guides. We are not a store: we don't sell products, process payments, or handle orders, shipping, or returns. Your purchase is a transaction between you and the store.
+  </p>
+
+  <h2>Prices and offers</h2>
+  <p>
+    We work to keep information accurate, but stores can change prices, terms, eligibility, and availability at any time without telling us. Each offer shows when we last checked it. The store's terms at checkout are the ones that apply. We aren't responsible for a store's decision to change, limit, or refuse an offer.
+  </p>
+
+  <h2>Links to other websites</h2>
+  <p>
+    The site links to websites we don't control, including stores and affiliate networks. Some links may be affiliate links, as explained in our <a href="/affiliate-disclosure/">affiliate disclosure</a>. We aren't responsible for the content, policies, or practices of other websites.
+  </p>
+
+  <h2>General information only</h2>
+  <p>Guides and articles are general information. They aren't legal, financial, or tax advice.</p>
+
+  <h2>Acceptable use</h2>
+  <p>Please don't:</p>
+  <ul>
+    <li>Use the site for anything unlawful or fraudulent.</li>
+    <li>Scrape, copy, or republish substantial parts of the site without permission.</li>
+    <li>Interfere with the site's operation, security, or other visitors' use, including by generating automated or artificial clicks on links.</li>
+    <li>Submit false information through our forms.</li>
+  </ul>
+
+  <h2>Content ownership</h2>
+  <p>
+    The text, design, and graphics we create are our property or used with permission. Store names, product names, and trademarks belong to their owners and are used only to identify them; their use doesn't imply endorsement. You may share links to our pages and quote brief excerpts with attribution.
+  </p>
+
+  <h2>Messages you send us</h2>
+  <p>If you send us suggestions or corrections, you allow us to use them to improve the site without obligation to you.</p>
+
+  <h2>Disclaimer</h2>
+  <p>
+    The site is provided “as is” and “as available.” To the fullest extent permitted by law, we disclaim all warranties, express or implied, including accuracy, completeness, fitness for a particular purpose, and non-infringement.
+  </p>
+
+  <h2>Limitation of liability</h2>
+  <p>
+    To the fullest extent permitted by law, we won't be liable for any indirect, incidental, special, consequential, or punitive damages, or for any loss arising from your use of the site or your purchases from third parties. Some jurisdictions don't allow certain limitations, so some of these may not apply to you.
+  </p>
+
+  {
+    owner.jurisdiction && (
+      <>
+        <h2>Governing law</h2>
+        <p>These terms are governed by the laws of {owner.jurisdiction}, without regard to conflict-of-law rules, except where the law of your place of residence requires otherwise.</p>
+      </>
+    )
+  }
+
+  <h2>Changes</h2>
+  <p>We may update these terms. The date at the top shows the latest version. Continuing to use the site after changes means you accept them.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about these terms? <a href="/contact/">Contact us</a>.</p>
+</PageLayout>

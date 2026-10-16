@@ -1,0 +1,18 @@
+# DEVELOPMENT FIXTURE — not a real offer. Never shown in production builds.
+title: "Sample: Expired kitchen deal (development fixture)"
+merchant: target
+category: home-kitchen
+offerType: sale
+description: Sample data used to preview how an expired offer renders. Not a real offer.
+editorialSummary: |-
+  This entry exists only to preview the expired-offer state. It is excluded from production builds and marked noindex.
+price: 24.99
+referencePrice: 39.99
+merchantUrl: https://www.example.com/sample-kitchen
+sourceUrl: https://www.example.com/sample-kitchen
+verificationMethod: merchant-page
+lastVerified: 2026-09-01T09:00:00-04:00
+publishedAt: 2026-09-01T09:00:00-04:00
+endDate: 2026-09-30T23:59:00-04:00
+status: published
+fixture: true

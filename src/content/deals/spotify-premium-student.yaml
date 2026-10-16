@@ -1,0 +1,25 @@
+title: "Spotify Premium Student with Hulu: 1 month for $0, then $6.99/month"
+merchant: spotify
+category: software-digital
+offerType: student
+description: Students at accredited US colleges get Spotify Premium plus the ad-supported Hulu plan for $6.99 a month, with the first month free if they are new to Premium.
+editorialSummary: |-
+  Premium Student is one of the best-value student subscriptions available: ad-free music and podcasts plus a Hulu (With Ads) subscription for one monthly price. If you would otherwise pay for both services separately, the bundle saves a meaningful amount each month.
+
+  The free month is only for accounts that have not tried Premium before. Student status must be re-verified every 12 months, and the discount is limited in total length, after which the account moves to standard pricing.
+eligibility: Students 18+ at an eligible accredited (Title IV) US higher-education institution.
+restrictions:
+  - The $0 first month applies only if you haven't tried Premium before.
+  - Student status must be re-verified every 12 months, for up to 3 additional 12-month periods.
+  - Hulu (With Ads) is included. Existing Hulu subscribers billed by Hulu must follow Spotify's steps to switch billing.
+price: 6.99
+pricePeriod: month
+priceNote: after 1 month for $0
+merchantUrl: https://www.spotify.com/us/student/
+sourceUrl: https://www.spotify.com/us/student/
+verificationMethod: merchant-official-search
+lastVerified: 2026-10-16T12:00:00-04:00
+publishedAt: 2026-10-16T12:00:00-04:00
+status: published
+featured: true
+tags: [music, streaming, hulu, students]

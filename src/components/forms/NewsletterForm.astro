@@ -1,0 +1,77 @@
+---
+/**
+ * Email sign-up. The copy changes with the configured provider so we never
+ * promise something the site does not do:
+ *  - netlify (default): a waitlist stored in Netlify Forms. No emails are sent
+ *    automatically, and we say so.
+ *  - buttondown / mailerlite: posts to the provider, which handles double opt-in
+ *    and unsubscribe links.
+ */
+import { newsletter } from '../../config/site';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  variant?: 'panel' | 'inline';
+  idPrefix?: string;
+}
+const { variant = 'panel', idPrefix = 'nl' } = Astro.props;
+
+const useButtondown = newsletter.provider === 'buttondown' && newsletter.buttondownUsername;
+const useMailerlite = newsletter.provider === 'mailerlite' && newsletter.mailerliteAction;
+const external = Boolean(useButtondown || useMailerlite);
+const action = useButtondown
+  ? `https://buttondown.com/api/emails/embed-subscribe/${encodeURIComponent(newsletter.buttondownUsername)}`
+  : useMailerlite
+    ? newsletter.mailerliteAction
+    : '/newsletter/thanks/';
+const emailField = useMailerlite ? 'fields[email]' : 'email';
+const dark = variant === 'panel';
+---
+
+<form
+  name="newsletter"
+  method="POST"
+  action={action}
+  data-netlify={external ? undefined : 'true'}
+  netlify-honeypot={external ? undefined : 'company'}
+  data-track-submit="Newsletter Signup"
+  target={useButtondown ? '_blank' : undefined}
+  class="w-full"
+>
+  {!external && <input type="hidden" name="form-name" value="newsletter" />}
+  {
+    !external && (
+      <p class="hidden" aria-hidden="true">
+        <label>
+          Leave this empty: <input name="company" tabindex="-1" autocomplete="off" />
+        </label>
+      </p>
+    )
+  }
+  <input type="hidden" name="source" value={Astro.url.pathname} />
+  <label for={`${idPrefix}-email`} class:list={['mb-2 block text-sm font-semibold', dark ? 'text-white' : 'text-ink-2']}>Email address</label>
+  <div class="flex flex-col gap-2.5 sm:flex-row">
+    <input
+      id={`${idPrefix}-email`}
+      type="email"
+      name={emailField}
+      required
+      autocomplete="email"
+      inputmode="email"
+      placeholder="you@example.com"
+      class="field sm:flex-1"
+    />
+    <button type="submit" class="btn-primary shrink-0">
+      <Icon name="mail" class="h-4 w-4" />
+      {external ? 'Subscribe' : 'Join the list'}
+    </button>
+  </div>
+  <p class:list={['mt-3 text-[0.8rem] leading-relaxed', dark ? 'text-white/65' : 'text-muted']}>
+    {
+      external
+        ? `You'll get a confirmation email first. Every email has an unsubscribe link.`
+        : `Our email newsletter hasn't launched yet. Join the list and we'll email you when it does — at most weekly, unsubscribe anytime.`
+    }
+    {' '}See our <a href="/privacy/" class:list={['underline underline-offset-2', dark ? 'text-white' : 'text-ink']}>privacy policy</a>.
+  </p>
+</form>

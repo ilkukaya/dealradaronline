@@ -1,0 +1,113 @@
+---
+/** Shared template for category and discount-program pages. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type Crumb } from '../layout/Breadcrumbs.astro';
+import DealCard from './DealCard.astro';
+import GuideCard from '../ui/GuideCard.astro';
+import Icon from '../ui/Icon.astro';
+import { getMerchantMap, type Deal, type Guide } from '../../lib/catalog';
+import { formatDate, getHeadline } from '../../lib/deal-utils';
+
+interface Props {
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  intro: string;
+  path: string;
+  crumbs: Crumb[];
+  deals: Deal[];
+  guides: Guide[];
+  eyebrow: string;
+  showComparison?: boolean;
+  siblings?: { href: string; label: string }[];
+}
+const { title, metaTitle, metaDescription, intro, path, crumbs, deals, guides, eyebrow, showComparison = false, siblings = [] } = Astro.props;
+const merchants = await getMerchantMap();
+const m = (id: string) => merchants.get(id)!;
+---
+
+<BaseLayout title={metaTitle} description={metaDescription} canonicalPath={path}>
+  <div class="border-line border-b bg-white">
+    <div class="container-page py-8 sm:py-10">
+      <Breadcrumbs items={crumbs} />
+      <p class="eyebrow mt-5">{eyebrow}</p>
+      <h1 class="display mt-2 text-4xl font-semibold sm:text-[2.75rem]">{title}</h1>
+      <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">{intro}</p>
+      {
+        siblings.length > 0 && (
+          <nav aria-label="Related collections" class="mt-6 flex flex-wrap gap-2">
+            {siblings.map((s) => (
+              <a href={s.href} class="chip" aria-current={s.href === path ? 'page' : undefined}>
+                {s.label}
+              </a>
+            ))}
+          </nav>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="container-page py-10">
+    {
+      showComparison && deals.length > 1 && (
+        <section aria-labelledby="compare" class="mb-12">
+          <h2 id="compare" class="display text-2xl font-semibold">At a glance</h2>
+          <div class="card mt-4 overflow-x-auto">
+            <table class="w-full min-w-[640px] text-left text-sm">
+              <thead class="text-muted border-line border-b text-xs tracking-wide uppercase">
+                <tr>
+                  <th scope="col" class="px-4 py-3 font-semibold">Store</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Offer</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Price / saving</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Last checked</th>
+                </tr>
+              </thead>
+              <tbody class="divide-line divide-y">
+                {deals.map((d) => (
+                  <tr data-expires={d.data.endDate?.toISOString()} data-expire-action="hide">
+                    <td class="text-ink px-4 py-3 font-semibold whitespace-nowrap">
+                      <a href={`/stores/${d.data.merchant}/`} class="hover:underline">{m(d.data.merchant).data.name}</a>
+                    </td>
+                    <td class="px-4 py-3">
+                      <a href={`/deals/${d.id}/`} class="text-ink-2 hover:text-ink hover:underline">{d.data.title}</a>
+                    </td>
+                    <td class="text-ink px-4 py-3 font-semibold whitespace-nowrap">
+                      {getHeadline(d.data).value}
+                      {getHeadline(d.data).note && <span class="text-muted block text-xs font-normal">{getHeadline(d.data).note}</span>}
+                    </td>
+                    <td class="text-muted px-4 py-3 whitespace-nowrap">{formatDate(d.data.lastVerified)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )
+    }
+
+    <section aria-labelledby="offers">
+      <h2 id="offers" class="display text-2xl font-semibold">
+        {deals.length} active {deals.length === 1 ? 'offer' : 'offers'}
+      </h2>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {deals.map((d) => <DealCard deal={d} merchant={m(d.data.merchant)} />)}
+      </div>
+    </section>
+
+    {
+      guides.length > 0 && (
+        <section class="mt-14" aria-labelledby="guides">
+          <h2 id="guides" class="display text-2xl font-semibold">Related guides</h2>
+          <div class="mt-5 grid gap-4 md:grid-cols-3">
+            {guides.slice(0, 3).map((g) => <GuideCard guide={g} />)}
+          </div>
+        </section>
+      )
+    }
+
+    <p class="text-muted mt-12 flex items-start gap-2 text-sm">
+      <Icon name="info" class="mt-0.5 h-4 w-4 shrink-0" />
+      <span>Offers are listed by date added. We don't accept payment for placement. <a href="/how-we-find-deals/" class="link">How we find deals</a>.</span>
+    </p>
+  </div>
+</BaseLayout>

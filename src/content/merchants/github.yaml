@@ -1,0 +1,15 @@
+name: GitHub
+domain: github.com
+websiteUrl: https://github.com/
+status: published
+categories: [software-digital]
+tagline: Developer platform offering a free Student Developer Pack of partner tools to verified students.
+overview: |-
+  GitHub is the code-hosting and collaboration platform used by most software developers. Through GitHub Education, verified students can claim the Student Developer Pack, a free bundle of offers from GitHub and partner companies — cloud credits, developer tools, domains, and learning resources.
+
+  The pack is one of the most valuable free student offers available for anyone learning to code, but its contents change over time. Each partner sets its own terms, and some offers must be renewed or expire after a set period.
+tips:
+  - Apply with your school-issued email address if you have one; it usually speeds up verification.
+  - Partner offers are claimed one by one. Only activate the ones you will use before they expire.
+facts: []
+affiliatePrograms: []

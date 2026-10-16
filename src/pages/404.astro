@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+---
+
+<BaseLayout title="Page not found" description="The page you were looking for could not be found." noindex canonicalPath="/404/">
+  <div class="container-page py-20 text-center">
+    <Icon name="radar" class="text-accent-strong mx-auto h-12 w-12" />
+    <h1 class="display mt-5 text-4xl font-semibold">That page is off the radar</h1>
+    <p class="text-ink-2 mx-auto mt-3 max-w-md">It may have moved, or the offer it described may have ended and been removed.</p>
+    <form action="/deals/" method="get" role="search" class="mx-auto mt-8 flex max-w-md gap-2">
+      <label for="nf-q" class="sr-only">Search deals</label>
+      <input id="nf-q" name="q" type="search" placeholder="Search deals and stores" class="field" />
+      <button class="btn-dark shrink-0" type="submit">Search</button>
+    </form>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="/deals/" class="btn-primary">Browse deals</a>
+      <a href="/" class="btn-ghost">Home</a>
+    </div>
+  </div>
+</BaseLayout>
