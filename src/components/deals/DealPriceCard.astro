@@ -1,8 +1,10 @@
 ---
-/** Price, promo code, store button, and link disclosure for a deal page. */
+/** Price, promo code, store button, link disclosure and key facts for a deal page. */
 import OutboundButton from './OutboundButton.astro';
 import Icon from '../ui/Icon.astro';
-import { formatPriceWithPeriod, getDiscountPercent, getHeadline, isAffiliateLink } from '../../lib/deal-utils';
+import { getCategory } from '../../config/taxonomy';
+import { programShortName } from '../../config/styles';
+import { formatDate, formatPrice, formatPriceWithPeriod, getDiscountPercent, getHeadline, isAffiliateLink } from '../../lib/deal-utils';
 import type { Deal, Merchant } from '../../lib/catalog';
 
 interface Props {
@@ -17,50 +19,64 @@ const d = deal.data;
 const headline = getHeadline(d);
 const pct = getDiscountPercent(d);
 const affiliate = isAffiliateLink(d);
+const category = getCategory(d.category);
+// Yearly saving, only when both monthly prices come from the merchant.
+const yearlySaving = d.pricePeriod === 'month' && d.price !== undefined && d.referencePrice !== undefined ? Math.round((d.referencePrice - d.price) * 12) : undefined;
 ---
 
-<div class:list={['card p-5 sm:p-6', className]}>
-{
-      active ? (
-        <>
-          <p class="text-ink text-3xl font-bold tracking-tight">{headline.value}</p>
-          {headline.note && <p class="text-muted mt-1 text-sm">{headline.note}</p>}
-          {d.referencePrice !== undefined && (
-            <p class="text-ink-2 mt-3 text-sm">
-              Regular price <s>{formatPriceWithPeriod(d.referencePrice, d.pricePeriod)}</s>
-              {pct !== undefined && <span class="bg-accent-soft text-accent-deep ml-2 rounded-full px-2 py-0.5 text-xs font-bold">{pct}% off</span>}
-            </p>
-          )}
-          {d.referencePriceNote && <p class="text-muted mt-1 text-xs">{d.referencePriceNote}.</p>}
-
-          {d.couponCode && (
-            <div class="border-accent-line bg-accent-soft mt-5 flex items-center justify-between gap-3 rounded-xl border border-dashed px-4 py-3">
-              <div>
-                <p class="text-muted text-xs font-semibold tracking-wide uppercase">Promo code</p>
-                <p class="text-ink font-mono text-lg font-bold">{d.couponCode}</p>
-              </div>
-              <button type="button" class="btn-ghost !min-h-9 !px-3 !text-sm" data-copy={d.couponCode}>
-                <Icon name="copy" class="h-4 w-4" /> <span data-copy-label>Copy code</span>
-              </button>
-            </div>
-          )}
-
-          <div class="mt-5" data-active-only>
-            <OutboundButton deal={deal} merchant={merchant} placement={placement} class="w-full sm:w-full" />
-          </div>
-          <p class="text-muted mt-3 text-xs leading-relaxed">
-            {affiliate
-              ? `Affiliate link: we may earn a commission if you buy through it, at no extra cost to you. It doesn't affect which offers we list.`
-              : `This link goes straight to ${merchant.data.domain}. We don't earn a commission from it.`}{' '}
-            <a href="/affiliate-disclosure/" class="underline underline-offset-2">Disclosure</a>
+<div class:list={['card border-t-accent-strong overflow-hidden border-t-4 p-6', className]}>
+  {
+    active ? (
+      <>
+        <p class="eyebrow">{programShortName[d.offerType]}</p>
+        <p class="mt-2 flex items-baseline gap-2">
+          <span class="display tabular text-ink text-[3rem] leading-none font-semibold">{headline.value}</span>
+        </p>
+        {headline.note && <p class="text-ink-2 mt-2 text-sm">{headline.note[0]!.toUpperCase() + headline.note.slice(1)}</p>}
+        {d.referencePrice !== undefined && (
+          <p class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+            <s class="text-muted tabular">Reg. {formatPriceWithPeriod(d.referencePrice, d.pricePeriod)}</s>
+            {pct !== undefined && <span class="pill bg-accent-strong text-white">{pct}% off</span>}
+            {yearlySaving !== undefined && yearlySaving > 0 && <span class="pill bg-shell text-ink !normal-case !tracking-normal">Saves {formatPrice(yearlySaving)}/yr</span>}
           </p>
-        </>
-      ) : (
-        <>
-          <p class="text-ink text-lg font-semibold">Offer no longer active</p>
-          <p class="text-ink-2 mt-2 text-sm">Prices and terms shown on this page are out of date.</p>
-          <a href={`/stores/${merchant.id}/`} class="btn-dark mt-5 w-full">See {merchant.data.name} offers</a>
-        </>
-      )
-    }
-  </div>
+        )}
+        {d.referencePriceNote && <p class="text-muted mt-1.5 text-xs">{d.referencePriceNote}.</p>}
+
+        {d.couponCode && (
+          <div class="border-accent-line bg-accent-soft mt-5 flex items-center justify-between gap-3 rounded-xl border border-dashed px-4 py-3">
+            <div>
+              <p class="text-muted text-xs font-semibold tracking-wide uppercase">Promo code</p>
+              <p class="text-ink font-mono text-lg font-bold">{d.couponCode}</p>
+            </div>
+            <button type="button" class="btn-dark !min-h-9 !px-3 !text-sm" data-copy={d.couponCode}>
+              <Icon name="copy" class="h-4 w-4" /> <span data-copy-label>Copy code</span>
+            </button>
+          </div>
+        )}
+
+        <div class="mt-6" data-active-only>
+          <OutboundButton deal={deal} merchant={merchant} placement={placement} class="!min-h-12 w-full !text-base sm:w-full" />
+        </div>
+        <p class="text-muted mt-3 text-center text-xs leading-relaxed">
+          {affiliate
+            ? `Affiliate link: we may earn a commission if you buy, at no extra cost to you.`
+            : `This link goes straight to ${merchant.data.domain}. We don't earn a commission from it.`}{' '}
+          <a href="/affiliate-disclosure/" class="underline underline-offset-2">Disclosure</a>
+        </p>
+      </>
+    ) : (
+      <>
+        <p class="text-ink text-lg font-semibold">Offer no longer active</p>
+        <p class="text-ink-2 mt-2 text-sm">Prices and terms shown on this page are out of date.</p>
+        <a href={`/stores/${merchant.id}/`} class="btn-dark mt-5 w-full">See {merchant.data.name} offers</a>
+      </>
+    )
+  }
+
+  <dl class="border-line divide-line mt-6 divide-y border-t text-sm">
+    <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Store</dt><dd><a href={`/stores/${merchant.id}/`} class="text-ink font-semibold hover:underline">{merchant.data.name}</a></dd></div>
+    {category && <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Category</dt><dd class="text-right"><a href={`/categories/${category.slug}/`} class="text-ink hover:underline">{category.name}</a></dd></div>}
+    <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Ends</dt><dd class="text-ink text-right">{d.endDate ? formatDate(d.endDate) : 'Not announced'}</dd></div>
+    <div class="flex justify-between gap-4 pt-2.5"><dt class="text-muted">Last checked</dt><dd class="text-positive flex items-center gap-1 text-right font-semibold"><Icon name="check-circle" class="h-3.5 w-3.5" /> {formatDate(d.lastVerified)}</dd></div>
+  </dl>
+</div>

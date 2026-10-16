@@ -14,10 +14,12 @@ tips:
   - If you already pay full price for Walmart+ and later qualify for Walmart+ Assist, check Walmart's terms for how the price change is applied.
 facts:
   - label: Standard returns
+    short: 90-day returns on most items
     value: Most items can be returned within 90 days of purchase or receipt, unless an exception applies. Returns can be made by mail, home pickup, or in store.
     sourceUrl: https://www.walmart.com/help/article/walmart-standard-return-policy/adc0dfb692954e67a4de206fb8d9e03a
     checkedAt: 2026-10-16
   - label: Walmart+ membership price
+    short: "Walmart+: $12.95/mo or $98/yr"
     value: Walmart+ is $12.95 per month or $98 per year, plus applicable tax.
     sourceUrl: https://www.walmart.com/plus
     checkedAt: 2026-10-16

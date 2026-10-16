@@ -3,7 +3,8 @@ import Monogram from '../ui/Monogram.astro';
 import Icon from '../ui/Icon.astro';
 import OutboundButton from './OutboundButton.astro';
 import { getOfferType, getCategory } from '../../config/taxonomy';
-import { formatDate, formatPriceWithPeriod, getDiscountPercent, getHeadline, isAffiliateLink } from '../../lib/deal-utils';
+import { programStyle } from '../../config/styles';
+import { formatDate, formatPriceWithPeriod, getDiscountPercent, getHeadline } from '../../lib/deal-utils';
 import type { Deal, Merchant } from '../../lib/catalog';
 
 interface Props {
@@ -11,21 +12,22 @@ interface Props {
   merchant: Merchant;
   /** heading level for the title, to keep page outlines valid */
   headingLevel?: 'h2' | 'h3';
-  layout?: 'grid' | 'feature';
 }
-const { deal, merchant, headingLevel = 'h3', layout = 'grid' } = Astro.props;
+const { deal, merchant, headingLevel = 'h3' } = Astro.props;
 const d = deal.data;
 const type = getOfferType(d.offerType);
 const category = getCategory(d.category);
+const style = programStyle[d.offerType];
 const headline = getHeadline(d);
 const pct = getDiscountPercent(d);
 const Heading = headingLevel;
 const href = `/deals/${deal.id}/`;
 const search = [d.title, merchant.data.name, d.description, type?.name, category?.name, ...d.tags].join(' ').toLowerCase();
+const finePrint = d.restrictions[0];
 ---
 
 <article
-  class:list={['card group relative flex flex-col p-5 transition-shadow hover:shadow-[var(--shadow-lift)]', layout === 'feature' && 'sm:p-6']}
+  class="card card-hover group relative flex flex-col p-5"
   data-deal-card
   data-search={search}
   data-merchant={merchant.id}
@@ -40,48 +42,60 @@ const search = [d.title, merchant.data.name, d.description, type?.name, category
   <div class="flex items-start gap-3">
     <Monogram name={merchant.data.name} size="sm" />
     <div class="min-w-0 flex-1">
-      <p class="text-ink-2 truncate text-sm font-semibold">{merchant.data.name}</p>
-      <p class="text-muted text-xs">{type?.label}{category ? ` · ${category.short}` : ''}</p>
+      <p class="text-ink truncate text-[0.95rem] font-semibold">{merchant.data.name}</p>
+      <p class="text-muted truncate text-xs">{category?.name}</p>
     </div>
+    {d.fixture && <span class="pill bg-caution-soft text-caution">Sample data</span>}
+  </div>
+
+  <div class="mt-4 flex flex-wrap gap-1.5">
+    {pct !== undefined && d.referencePrice !== undefined && <span class="pill bg-accent-strong text-white">{pct}% off</span>}
     {
-      d.fixture && (
-        <span class="bg-caution-soft text-caution rounded-full px-2 py-0.5 text-[0.7rem] font-semibold">Sample data</span>
+      type && (
+        <span class:list={['pill', style.tint, style.text]}>
+          <Icon name={style.icon} class="h-3 w-3" />
+          {type.label}
+        </span>
       )
     }
   </div>
 
-  <Heading class="mt-4 text-[1.05rem] leading-snug font-semibold">
-    <a href={href} class="text-ink after:absolute after:inset-0 after:rounded-[var(--radius-card)] hover:underline" data-track="Deal Click" data-track-props={JSON.stringify({ deal: deal.id })}>
+  <Heading class="display mt-2.5 text-[1.32rem] leading-[1.2] font-medium">
+    <a href={href} class="text-ink after:absolute after:inset-0 after:rounded-[var(--radius-card)] hover:underline decoration-1 underline-offset-4" data-track="Deal Click" data-track-props={JSON.stringify({ deal: deal.id })}>
       {d.title}
     </a>
   </Heading>
 
-  <div class="mt-4 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-    <span class="text-ink text-2xl font-bold tracking-tight">{headline.value}</span>
+  <div class="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+    <span class="display tabular text-ink text-[1.9rem] leading-none font-semibold">{headline.value}</span>
     {
       d.referencePrice !== undefined && (
-        <span class="text-muted text-sm">
+        <span class="text-muted tabular text-sm">
           <span class="sr-only">Regular price </span>
           <s>{formatPriceWithPeriod(d.referencePrice, d.pricePeriod)}</s>
         </span>
       )
     }
-    {
-      pct !== undefined && d.referencePrice !== undefined && (
-        <span class="bg-accent-soft text-accent-deep rounded-full px-2 py-0.5 text-xs font-bold">{pct}% off</span>
-      )
-    }
   </div>
-  {headline.note && <p class="text-muted mt-0.5 text-sm">{headline.note}</p>}
+  {headline.note && <p class="text-muted mt-1 text-sm">{headline.note}</p>}
 
-  <p class="text-ink-2 mt-3 line-clamp-3 text-[0.92rem] leading-relaxed">{d.description}</p>
+  {
+    finePrint && (
+      <div class="bg-shell mt-4 rounded-xl px-3.5 py-3">
+        <p class="text-ink flex items-center gap-1.5 text-[0.72rem] font-bold tracking-wide uppercase">
+          <Icon name="info" class="text-accent-strong h-3.5 w-3.5" /> Fine print
+        </p>
+        <p class="text-ink-2 mt-1 line-clamp-3 text-[0.86rem] leading-relaxed">{finePrint}</p>
+      </div>
+    )
+  }
 
-  <div class="border-line mt-auto flex items-center justify-between gap-3 border-t pt-4 text-xs">
-    <span class="text-muted inline-flex items-center gap-1.5">
-      <Icon name="clock" class="h-3.5 w-3.5" /> Checked {formatDate(d.lastVerified)}
-    </span>
-    <span class="relative z-10">
-      <OutboundButton deal={deal} merchant={merchant} placement="card" variant="text" label={isAffiliateLink(d) ? 'Shop' : 'Visit store'} />
-    </span>
+  <div class="mt-auto pt-4">
+    <p class="text-positive flex items-center gap-1.5 text-xs font-semibold">
+      <Icon name="check-circle" class="h-3.5 w-3.5" /> Checked {formatDate(d.lastVerified)}
+    </p>
+    <div class="relative z-10 mt-3">
+      <OutboundButton deal={deal} merchant={merchant} placement="card" class="!min-h-10 w-full !text-sm sm:w-full" />
+    </div>
   </div>
 </article>

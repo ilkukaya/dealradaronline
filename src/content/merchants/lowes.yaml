@@ -14,10 +14,12 @@ tips:
   - Major appliances have a 48-hour return window. Inspect them when they arrive.
 facts:
   - label: Standard returns
+    short: 90-day returns with receipt
     value: Most new, unused merchandise can be returned with a receipt within 90 days. Major appliances have 48 hours; TVs and electronics have 30 days.
     sourceUrl: https://www.lowes.com/l/help/returns-policy
     checkedAt: 2026-10-16
   - label: Member shipping
+    short: Free shipping for Silver members
     value: MyLowe's Rewards Silver members get free standard shipping (excludes Alaska and Hawaii).
     sourceUrl: https://www.lowes.com/l/about/mylowes-rewards
     checkedAt: 2026-10-16

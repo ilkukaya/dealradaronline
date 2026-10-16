@@ -15,10 +15,12 @@ tips:
   - Strikethrough "List Price" labels are set by the listing, not by us. Read our guide on judging whether a discount is real before relying on them.
 facts:
   - label: Standard returns
+    short: 30-day returns on most items
     value: Most items shipped from Amazon.com can be returned within 30 days of delivery. Some categories and third-party sellers have exceptions.
     sourceUrl: https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7
     checkedAt: 2026-10-16
   - label: Prime membership price
+    short: "Prime: $14.99/mo or $139/yr"
     value: Prime is $14.99 per month or $139 per year after any free trial.
     sourceUrl: https://www.amazon.com/amazonprime
     checkedAt: 2026-10-16

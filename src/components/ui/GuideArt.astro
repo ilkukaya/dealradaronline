@@ -1,0 +1,64 @@
+---
+/**
+ * Small illustrative diagram for a guide card header. Numbers shown here are
+ * labeled as examples — they are illustrations, not offers.
+ */
+import Icon from './Icon.astro';
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+---
+
+<div class="bg-shell relative flex h-36 items-center justify-center overflow-hidden rounded-xl" aria-hidden="true">
+  <svg class="absolute -right-10 -bottom-16 h-44 w-44 opacity-[0.07]" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="none" stroke="#0e1a35" stroke-width="1.5"></circle><circle cx="50" cy="50" r="32" fill="none" stroke="#0e1a35" stroke-width="1.5"></circle><circle cx="50" cy="50" r="16" fill="none" stroke="#0e1a35" stroke-width="1.5"></circle></svg>
+  {
+    slug === 'compare-final-prices-shipping-tax' ? (
+      <div class="flex items-center gap-2 text-sm font-semibold">
+        <span class="border-accent-strong rounded-lg border-2 bg-white px-3 py-1.5">Item $20</span>
+        <span class="text-faint">+</span>
+        <span class="border-accent-line bg-accent-soft text-accent-deep rounded-lg border px-3 py-1.5">Ship $8</span>
+        <span class="text-faint">=</span>
+        <span class="bg-ink rounded-full px-3 py-1.5 text-white">$28</span>
+        <span class="text-faint absolute bottom-2 left-3 text-[0.65rem] font-semibold tracking-wider uppercase">Example</span>
+      </div>
+    ) : slug === 'coupon-code-restrictions-explained' ? (
+      <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+        <span class="border-positive/30 text-positive rounded-md border bg-white px-2.5 py-1.5">✓ Full-price items</span>
+        <span class="border-accent-line text-accent-deep rounded-md border bg-white px-2.5 py-1.5">✕ Sale items</span>
+        <span class="border-accent-line text-accent-deep rounded-md border bg-white px-2.5 py-1.5">✕ Excluded brands</span>
+        <span class="border-line-strong text-ink rounded-md border bg-white px-2.5 py-1.5">1 code per order</span>
+      </div>
+    ) : slug === 'how-to-check-a-return-policy' ? (
+      <div class="w-56">
+        <div class="bg-line-strong relative h-1.5 rounded-full"><div class="bg-accent-strong absolute inset-y-0 left-0 w-1/2 rounded-full"></div><span class="border-ink absolute -top-1 left-0 h-3.5 w-3.5 rounded-full border-2 bg-white"></span><span class="bg-accent-strong absolute -top-1 left-1/2 h-3.5 w-3.5 rounded-full"></span></div>
+        <div class="text-muted mt-3 flex justify-between text-[0.7rem] font-semibold"><span>Day 0</span><span class="text-accent-deep">Day 15</span><span>Day 30</span></div>
+        <p class="text-faint mt-2 text-center text-[0.65rem] font-semibold tracking-wider uppercase">Example return windows</p>
+      </div>
+    ) : slug === 'how-to-tell-if-a-discount-is-good' ? (
+      <div class="w-56 space-y-2 text-[0.7rem] font-semibold">
+        <div><div class="text-muted flex justify-between"><span>"Was" price</span><span>$100</span></div><div class="bg-line-strong mt-1 h-1.5 rounded-full"></div></div>
+        <div><div class="text-ink flex justify-between"><span>Usual price</span><span>$80</span></div><div class="bg-ink mt-1 h-1.5 w-4/5 rounded-full"></div></div>
+        <div><div class="text-accent-deep flex justify-between"><span>Sale price</span><span>$70</span></div><div class="bg-accent-strong mt-1 h-1.5 w-[70%] rounded-full"></div></div>
+        <p class="text-faint text-center text-[0.65rem] tracking-wider uppercase">Example</p>
+      </div>
+    ) : slug === 'how-to-compare-online-deals-safely' ? (
+      <div class="flex items-center gap-4">
+        <span class="bg-ink flex h-14 w-14 items-center justify-center rounded-2xl text-white"><Icon name="shield" class="h-7 w-7" /></span>
+        <ul class="text-ink-2 space-y-1 text-xs font-semibold"><li>✓ Real contact details</li><li>✓ Clear return policy</li><li>✓ Card payment protection</li></ul>
+      </div>
+    ) : slug === 'student-discounts-guide' ? (
+      <div class="flex items-center gap-4">
+        <span class="bg-positive-soft text-positive flex h-14 w-14 items-center justify-center rounded-2xl"><Icon name="student" class="h-7 w-7" /></span>
+        <ul class="text-ink-2 space-y-1 text-xs font-semibold"><li>School email or ID</li><li>Verification service</li><li>Re-verify every year</li></ul>
+      </div>
+    ) : slug === 'military-discounts-guide' ? (
+      <div class="flex items-center gap-4">
+        <span class="bg-lilac-soft text-lilac flex h-14 w-14 items-center justify-center rounded-2xl"><Icon name="shield" class="h-7 w-7" /></span>
+        <ul class="text-ink-2 space-y-1 text-xs font-semibold"><li>Who qualifies varies</li><li>Verify once online</li><li>Check the exclusions</li></ul>
+      </div>
+    ) : (
+      <span class="bg-ink flex h-14 w-14 items-center justify-center rounded-2xl text-white"><Icon name="book" class="h-7 w-7" /></span>
+    )
+  }
+</div>

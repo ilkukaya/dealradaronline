@@ -1,5 +1,6 @@
 ---
 import Monogram from './Monogram.astro';
+import Icon from './Icon.astro';
 import type { Merchant } from '../../lib/catalog';
 
 interface Props {
@@ -11,15 +12,19 @@ const { merchant, offerCount, headingLevel = 'h3' } = Astro.props;
 const Heading = headingLevel;
 ---
 
-<article class="card group relative flex items-start gap-4 p-5">
-  <Monogram name={merchant.data.name} />
-  <div class="min-w-0">
-    <Heading class="text-ink text-base font-semibold">
-      <a href={`/stores/${merchant.id}/`} class="after:absolute after:inset-0 hover:underline">{merchant.data.name}</a>
-    </Heading>
-    <p class="text-muted mt-0.5 text-sm">
-      {offerCount > 0 ? `${offerCount} ${offerCount === 1 ? 'offer' : 'offers'}` : 'Store guide'} · {merchant.data.domain}
-    </p>
-    <p class="text-ink-2 mt-2 line-clamp-2 text-sm leading-relaxed">{merchant.data.tagline}</p>
+<article class="card card-hover group relative flex flex-col p-5" data-store-card data-search={`${merchant.data.name} ${merchant.data.domain} ${merchant.data.tagline}`.toLowerCase()}>
+  <div class="flex items-start gap-4">
+    <Monogram name={merchant.data.name} size="lg" />
+    <div class="min-w-0 flex-1">
+      <Heading class="display text-ink text-[1.4rem] leading-tight font-medium">
+        <a href={`/stores/${merchant.id}/`} class="after:absolute after:inset-0 hover:underline decoration-1 underline-offset-4">{merchant.data.name}</a>
+      </Heading>
+      <p class="text-muted text-sm">{merchant.data.domain}</p>
+      <span class:list={['pill mt-2', offerCount > 0 ? 'bg-positive-soft text-positive' : 'bg-shell text-muted']}>
+        {offerCount > 0 ? `${offerCount} active ${offerCount === 1 ? 'offer' : 'offers'}` : 'Store guide'}
+      </span>
+    </div>
   </div>
+  <p class="text-ink-2 mt-4 line-clamp-2 text-sm leading-relaxed">{merchant.data.tagline}</p>
+  <p class="text-ink mt-auto flex items-center gap-1.5 pt-4 text-sm font-semibold">Offers & policies <Icon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></p>
 </article>

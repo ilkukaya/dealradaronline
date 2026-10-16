@@ -45,20 +45,22 @@ check(studentCount > 0 && studentCount < total, `search "student" narrows result
 check(page.url().includes('q=student'), 'search term is reflected in the URL');
 check(/for “student”/.test(await page.locator('[data-result-count]').innerText()), 'result count mentions the query');
 
-// Category + store filters
+// Type + store filters (sidebar checkboxes)
 await page.fill('#f-q', '');
-await page.selectOption('#f-type', 'military');
+await page.check('input[name="type"][value="military"]');
 await page.waitForTimeout(100);
 const military = await page.locator('[data-deal-card]:visible').evaluateAll((els) => els.map((e) => e.dataset.type));
 check(military.length > 0 && military.every((t) => t === 'military'), `type filter shows only military offers (${military.length})`);
-await page.selectOption('#f-type', '');
-const firstStore = await page.locator('#f-store option').nth(1).getAttribute('value');
-await page.selectOption('#f-store', firstStore);
+check(page.url().includes('type=military'), 'type filter is reflected in the URL');
+check((await page.locator('[data-active-filters] button').count()) === 1, 'active filter pill is shown');
+await page.uncheck('input[name="type"][value="military"]');
+const firstStore = await page.locator('input[name="store"]').first().getAttribute('value');
+await page.check(`input[name="store"][value="${firstStore}"]`);
 const stores = await page.locator('[data-deal-card]:visible').evaluateAll((els) => els.map((e) => e.dataset.merchant));
 check(stores.length > 0 && stores.every((s) => s === firstStore), `store filter shows only ${firstStore}`);
 
 // Sorting by price
-await page.selectOption('#f-store', '');
+await page.uncheck(`input[name="store"][value="${firstStore}"]`);
 await page.selectOption('#f-sort', 'price-asc');
 const prices = await page.locator('[data-deal-card]:visible').evaluateAll((els) => els.map((e) => e.dataset.price).filter((p) => p !== '').map(Number));
 check(prices.every((p, i) => i === 0 || prices[i - 1] <= p), 'price sort is ascending');
@@ -74,6 +76,9 @@ check((await visible()) === total, 'clear filters restores all offers');
 await page.goto(`${base}/deals/?q=free+shipping`, { waitUntil: 'networkidle' });
 check((await page.inputValue('#f-q')) === 'free shipping', 'query parameter pre-fills the search box');
 check((await visible()) > 0, 'header search lands on matching results');
+await page.goto(`${base}/deals/?type=student,military`, { waitUntil: 'networkidle' });
+const multi = await page.locator('[data-deal-card]:visible').evaluateAll((els) => [...new Set(els.map((e) => e.dataset.type))].sort().join(','));
+check(multi === 'military,student', `multi-select type filter from URL works (${multi})`);
 
 // Outbound click beacon
 await page.goto(`${base}/deals/`, { waitUntil: 'networkidle' });
@@ -100,11 +105,26 @@ check((await page.locator('form[name="contact"] input[name="form-name"]').getAtt
 const mobile = await browser.newContext({ viewport: { width: 375, height: 740 }, isMobile: true, hasTouch: true });
 const m = await mobile.newPage();
 m.on('pageerror', (e) => pageErrors.push(e.message));
-for (const path of ['/', '/deals/', '/stores/', '/discounts/student/', '/guides/', '/guides/compare-final-prices-shipping-tax/', '/privacy/', '/contact/']) {
+for (const path of ['/', '/deals/', '/deals/amazon-prime-for-young-adults/', '/stores/', '/stores/target/', '/discounts/', '/discounts/student/', '/categories/', '/guides/', '/guides/compare-final-prices-shipping-tax/', '/privacy/', '/contact/']) {
   await m.goto(`${base}${path}`, { waitUntil: 'networkidle' });
   const overflow = await m.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  check(overflow <= 0, `no horizontal overflow at 375px on ${path}`);
+  // Elements that stick out past the screen edge (ignoring intentional horizontal scrollers and clipped areas).
+  const sticking = await m.evaluate(() =>
+    [...document.querySelectorAll('main *')].filter((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.right <= window.innerWidth + 1) return false;
+      for (let p = el.parentElement; p; p = p.parentElement) {
+        if (['auto', 'scroll', 'hidden', 'clip'].includes(getComputedStyle(p).overflowX)) return false;
+      }
+      return true;
+    }).length,
+  );
+  check(overflow <= 0 && sticking === 0, `no horizontal overflow at 375px on ${path}${sticking ? ` (${sticking} elements past the edge)` : ''}`);
 }
+await m.goto(`${base}/deals/`, { waitUntil: 'networkidle' });
+check(!(await m.locator('#filter-panel').isVisible()), 'mobile filters are collapsed by default');
+await m.click('[data-filter-toggle]');
+check(await m.locator('#filter-panel').isVisible(), 'mobile filter toggle opens the panel');
 await m.goto(`${base}/`, { waitUntil: 'networkidle' });
 await m.click('[data-mobile-menu] summary');
 check(await m.locator('nav[aria-label="Mobile"]').isVisible(), 'mobile menu opens');

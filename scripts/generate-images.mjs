@@ -25,7 +25,7 @@ const tagline = process.env.PUBLIC_SITE_TAGLINE || 'Discover Deals. Save More.';
 const domain = new URL(process.env.PUBLIC_SITE_URL || 'https://dealradaronline.com').host;
 
 const font = (p) => readFileSync(join(root, 'node_modules', p)).toString('base64');
-const fraunces = font('@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2');
+const display = font('@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2');
 const inter = font('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2');
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -41,11 +41,11 @@ const mark = (size, ink = '#0e1a35') => `
 
 const words = brand.split(' ');
 const wordmark = (ink, sub) =>
-  `<span style="font-family:Fraunces;font-weight:600;color:${ink};letter-spacing:-0.01em">${esc(words.length > 1 ? words.slice(0, -1).join(' ') : brand)}</span>` +
+  `<span style="font-family:Display;font-weight:600;color:${ink};letter-spacing:-0.01em">${esc(words.length > 1 ? words.slice(0, -1).join(' ') : brand)}</span>` +
   (words.length > 1 ? `<span style="font-family:Inter;font-weight:700;color:${sub};letter-spacing:0.14em;text-transform:uppercase;font-size:0.5em;margin-left:0.35em">${esc(words.at(-1))}</span>` : '');
 
 const baseCss = `
-@font-face{font-family:Fraunces;src:url(data:font/woff2;base64,${fraunces}) format('woff2');font-weight:100 900}
+@font-face{font-family:Display;src:url(data:font/woff2;base64,${display}) format('woff2');font-weight:100 900}
 @font-face{font-family:Inter;src:url(data:font/woff2;base64,${inter}) format('woff2');font-weight:100 900}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Inter;-webkit-font-smoothing:antialiased}
@@ -64,7 +64,7 @@ function socialCard({ eyebrow, title, footer }) {
   <div style="position:absolute;left:72px;top:64px;display:flex;align-items:center;gap:16px;font-size:34px">${mark(52, '#ffffff')}<span>${wordmark('#ffffff', '#fbd5c7')}</span></div>
   <div style="position:absolute;left:72px;right:200px;top:190px">
     <div style="font-size:22px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#f8a58c">${esc(eyebrow)}</div>
-    <div style="font-family:Fraunces;font-weight:600;font-size:${size}px;line-height:1.08;margin-top:18px;letter-spacing:-0.015em">${esc(title)}</div>
+    <div style="font-family:Display;font-weight:600;font-size:${size}px;line-height:1.08;margin-top:18px;letter-spacing:-0.015em">${esc(title)}</div>
   </div>
   <div style="position:absolute;left:72px;bottom:56px;font-size:24px;color:rgba(255,255,255,.7)">${esc(footer)}</div>
   <div style="position:absolute;left:0;right:0;bottom:0;height:10px;background:#f0603c"></div>
@@ -84,7 +84,7 @@ function pin({ eyebrow, title, summary }) {
   </div>
   <div style="position:absolute;left:80px;right:80px;top:640px">
     <div style="font-size:26px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c8401a">${esc(eyebrow)}</div>
-    <div style="font-family:Fraunces;font-weight:600;font-size:${title.length > 60 ? 70 : 80}px;line-height:1.06;margin-top:22px;letter-spacing:-0.015em">${esc(title)}</div>
+    <div style="font-family:Display;font-weight:600;font-size:${title.length > 60 ? 70 : 80}px;line-height:1.06;margin-top:22px;letter-spacing:-0.015em">${esc(title)}</div>
     <div style="font-size:32px;line-height:1.45;margin-top:30px;color:#2b3752">${esc(summary)}</div>
   </div>
   <div style="position:absolute;left:80px;right:80px;bottom:70px;display:flex;align-items:center;justify-content:space-between;font-size:30px">

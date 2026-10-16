@@ -2,22 +2,58 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
 import GuideCard from '../../components/ui/GuideCard.astro';
-import { getGuides } from '../../lib/catalog';
+import GuideArt from '../../components/ui/GuideArt.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { site } from '../../config/site';
+import { getGuides, readingMinutes } from '../../lib/catalog';
+import { formatDate } from '../../lib/deal-utils';
 
 const guides = await getGuides();
+const featured = guides.find((g) => g.id === 'how-to-tell-if-a-discount-is-good') ?? guides[0];
+const rest = guides.filter((g) => g.id !== featured?.id);
 ---
 
 <BaseLayout title="Shopping Guides: Discounts, Coupons, Returns & Shipping" description="Practical, plain-English guides to judging discounts, using coupon codes, comparing final prices, checking return policies, and shopping online safely." canonicalPath="/guides/">
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-8 sm:py-10">
+  <div class="bg-shell">
+    <div class="container-page pt-7 pb-12">
       <Breadcrumbs items={[{ name: 'Guides', href: '/guides/' }]} />
-      <h1 class="display mt-4 text-4xl font-semibold">Shopping guides</h1>
-      <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">
+      <p class="eyebrow mt-6">Shopping guides</p>
+      <h1 class="display mt-2 text-[2.75rem] leading-[1.02] font-semibold sm:text-[3.5rem]">Shop smarter, avoid the traps</h1>
+      <p class="text-ink-2 mt-4 max-w-2xl text-lg leading-relaxed">
         How to tell a real discount from a marketing one, what coupon fine print actually means, and how to compare the price you'll really pay.
       </p>
     </div>
   </div>
-  <div class="container-page grid gap-4 py-10 md:grid-cols-2 lg:grid-cols-3">
-    {guides.map((g) => <GuideCard guide={g} headingLevel="h2" />)}
+
+  <div class="container-page py-12">
+    {
+      featured && (
+        <article class="card group relative grid overflow-hidden md:grid-cols-2">
+          <div class="flex flex-col p-6 sm:p-10">
+            <p class="flex flex-wrap items-center gap-2">
+              <span class="pill bg-accent-soft text-accent-deep">Start here</span>
+              {featured.data.tags[0] && <span class="pill bg-shell text-ink-2">{featured.data.tags[0]}</span>}
+            </p>
+            <p class="text-muted mt-4 flex items-center gap-1.5 text-sm"><Icon name="clock" class="h-4 w-4" /> {readingMinutes(featured.body)} min read · Updated {formatDate(featured.data.updatedAt ?? featured.data.publishedAt)}</p>
+            <h2 class="display mt-3 text-[2.1rem] leading-[1.1] font-semibold">
+              <a href={`/guides/${featured.id}/`} class="text-ink after:absolute after:inset-0 hover:underline decoration-1 underline-offset-4">{featured.data.title}</a>
+            </h2>
+            <p class="text-ink-2 mt-4 leading-relaxed">{featured.data.summary}</p>
+            <div class="border-line mt-auto flex items-center justify-between gap-4 border-t pt-6">
+              <span class="text-muted text-sm">By the {site.name} editors</span>
+              <span class="btn-primary pointer-events-none !min-h-10 !text-sm">Read the guide <Icon name="arrow" class="h-4 w-4" /></span>
+            </div>
+          </div>
+          <div class="bg-shell flex items-center justify-center p-6 sm:p-10">
+            <div class="w-full max-w-sm scale-110"><GuideArt slug={featured.id} /></div>
+          </div>
+        </article>
+      )
+    }
+
+    <h2 class="display mt-16 text-[2rem] font-semibold">All guides</h2>
+    <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {rest.map((g) => <GuideCard guide={g} />)}
+    </div>
   </div>
 </BaseLayout>

@@ -1,25 +1,32 @@
 ---
 import Icon from './Icon.astro';
+import GuideArt from './GuideArt.astro';
 import { formatDate } from '../../lib/deal-utils';
 import { readingMinutes, type Guide } from '../../lib/catalog';
 
 interface Props {
   guide: Guide;
   headingLevel?: 'h2' | 'h3';
+  /** Show the illustrated header. */
+  art?: boolean;
 }
-const { guide, headingLevel = 'h3' } = Astro.props;
+const { guide, headingLevel = 'h3', art = true } = Astro.props;
 const Heading = headingLevel;
 const g = guide.data;
+const topic = g.tags[0];
 ---
 
-<article class="card group relative flex flex-col p-5 sm:p-6">
-  <p class="text-muted flex items-center gap-2 text-xs font-medium">
-    <Icon name="book" class="text-accent-strong h-4 w-4" />
-    Guide · {readingMinutes(guide.body)} min read
+<article class="card card-hover group relative flex flex-col p-4 sm:p-5">
+  {art && <GuideArt slug={guide.id} />}
+  <p class:list={['text-accent-deep text-[0.7rem] font-bold tracking-[0.12em] uppercase', art ? 'mt-5' : '']}>
+    {topic ?? 'Shopping guide'}
   </p>
-  <Heading class="display mt-3 text-xl leading-snug font-semibold">
-    <a href={`/guides/${guide.id}/`} class="text-ink after:absolute after:inset-0 hover:underline">{g.title}</a>
+  <Heading class="display mt-1.5 text-[1.35rem] leading-snug font-medium">
+    <a href={`/guides/${guide.id}/`} class="text-ink after:absolute after:inset-0 hover:underline decoration-1 underline-offset-4">{g.title}</a>
   </Heading>
-  <p class="text-ink-2 mt-2 line-clamp-3 text-[0.95rem] leading-relaxed">{g.summary}</p>
-  <p class="text-muted mt-auto pt-4 text-xs">Updated {formatDate(g.updatedAt ?? g.publishedAt)}</p>
+  <p class="text-ink-2 mt-2 line-clamp-3 text-[0.92rem] leading-relaxed">{g.summary}</p>
+  <p class="text-ink mt-auto flex items-center gap-1.5 pt-4 text-sm font-semibold">
+    Read the {readingMinutes(guide.body)}-min guide <Icon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+  </p>
+  <p class="sr-only">Updated {formatDate(g.updatedAt ?? g.publishedAt)}</p>
 </article>

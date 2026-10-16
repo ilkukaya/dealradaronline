@@ -1,0 +1,73 @@
+---
+/** Large editorial deal card used for featured offers on the homepage. */
+import Monogram from '../ui/Monogram.astro';
+import Icon from '../ui/Icon.astro';
+import OutboundButton from './OutboundButton.astro';
+import { programShortName, programStyle } from '../../config/styles';
+import { formatDate, formatPriceWithPeriod, getDiscountPercent, getHeadline, getOutboundLink } from '../../lib/deal-utils';
+import type { Deal, Merchant } from '../../lib/catalog';
+
+interface Props {
+  deal: Deal;
+  merchant: Merchant;
+}
+const { deal, merchant } = Astro.props;
+const d = deal.data;
+const style = programStyle[d.offerType];
+const headline = getHeadline(d);
+const pct = getDiscountPercent(d);
+const link = getOutboundLink(d);
+const host = new URL(link.href).host.replace(/^www\./, '');
+---
+
+<article class="card card-hover relative flex flex-col p-6 sm:p-7" data-expires={d.endDate?.toISOString()} data-expire-action="hide">
+  <div class="flex items-start gap-3">
+    <Monogram name={merchant.data.name} />
+    <div class="min-w-0 flex-1">
+      <p class="text-ink font-semibold">{merchant.data.name}</p>
+      <p class:list={['flex items-center gap-1 text-sm', style.text]}>
+        <Icon name={style.icon} class="h-3.5 w-3.5" />
+        {programShortName[d.offerType]}
+      </p>
+    </div>
+    <span class="pill bg-positive-soft text-positive shrink-0 !normal-case !tracking-normal">
+      <Icon name="check-circle" class="h-3.5 w-3.5" /> Checked {formatDate(d.lastVerified)}
+    </span>
+  </div>
+
+  <h3 class="display mt-5 text-[1.65rem] leading-[1.15] font-medium">
+    <a href={`/deals/${deal.id}/`} class="text-ink hover:underline decoration-1 underline-offset-4" data-track="Deal Click" data-track-props={JSON.stringify({ deal: deal.id, placement: 'featured' })}>
+      {d.title}
+    </a>
+  </h3>
+  <p class="text-ink-2 mt-2.5 leading-relaxed">{d.description}</p>
+
+  <div class="bg-shell mt-5 rounded-2xl px-5 py-4">
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <span class="display tabular text-ink text-[2.3rem] leading-none font-semibold">{headline.value}</span>
+      {d.referencePrice !== undefined && <s class="text-muted tabular text-sm">Reg. {formatPriceWithPeriod(d.referencePrice, d.pricePeriod)}</s>}
+      {pct !== undefined && d.referencePrice !== undefined && <span class="pill bg-accent-strong text-white">{pct}% off</span>}
+    </div>
+    {headline.note && <p class="text-ink-2 mt-2 text-sm">{headline.note[0]!.toUpperCase() + headline.note.slice(1)}.</p>}
+  </div>
+
+  {
+    d.restrictions.length > 0 && (
+      <ul class="mt-5 space-y-2.5 text-[0.92rem]">
+        {d.restrictions.slice(0, 2).map((r) => (
+          <li class="text-ink-2 flex gap-2.5 leading-relaxed">
+            <Icon name="info" class="text-accent-strong mt-0.5 h-4 w-4 shrink-0" />
+            <span>{r}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <div class="mt-auto pt-6">
+    <div class="border-line flex items-center justify-between gap-3 border-t pt-5 text-sm">
+      <span class="text-muted truncate">{link.kind === 'affiliate' ? 'Affiliate link' : `Links directly to ${host}`}</span>
+      <OutboundButton deal={deal} merchant={merchant} placement="featured" class="!min-h-10 shrink-0 !text-sm" />
+    </div>
+  </div>
+</article>

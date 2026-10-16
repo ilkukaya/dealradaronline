@@ -14,14 +14,17 @@ tips:
   - Keep shoes unworn outdoors until you are sure they fit — Nike's return window is long, but condition still matters.
 facts:
   - label: Standard returns
+    short: 60-day returns
     value: Most purchases can be returned or exchanged for any reason within 60 days.
     sourceUrl: https://www.nike.com/help/a/how-to-return/app
     checkedAt: 2026-10-16
   - label: Member shipping
+    short: Free shipping on $50+ for members
     value: Nike Members get free standard shipping on orders of $50 or more.
     sourceUrl: https://www.nike.com/membership/shipping
     checkedAt: 2026-10-16
   - label: Other discount programs
+    short: 10% off for more groups
     value: Nike also offers 10% discounts for eligible teachers, students, and US first responders and medical professionals.
     sourceUrl: https://www.nike.com/help/a/teacher-discount
     checkedAt: 2026-10-16

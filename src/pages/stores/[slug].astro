@@ -20,87 +20,124 @@ const md = merchant.data;
 const deals = await getDealsForMerchant(merchant.id);
 const active = deals.filter(isActive);
 const ended = deals.filter((d) => !isActive(d));
-const guides = (await getGuides()).filter((g) => g.data.relatedStores.includes(merchant.id));
-const generalGuides = guides.length ? guides : (await getGuides()).filter((g) => ['how-to-check-a-return-policy', 'compare-final-prices-shipping-tax'].includes(g.id));
+const allGuides = await getGuides();
+const guides = allGuides.filter((g) => g.data.relatedStores.includes(merchant.id));
+const generalGuides = guides.length ? guides : allGuides.filter((g) => ['how-to-check-a-return-policy', 'compare-final-prices-shipping-tax'].includes(g.id));
 const affiliate = merchantHasApprovedProgram(merchant);
 const overview = md.overview.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+const latestFact = md.facts.length ? new Date(Math.max(...md.facts.map((f) => f.checkedAt.getTime()))) : undefined;
+const factIcon = (label: string) => (/ship/i.test(label) ? 'truck' : /return/i.test(label) ? 'return' : /price match/i.test(label) ? 'scale' : /member|prime|walmart\+/i.test(label) ? 'badge' : 'info');
+const tiles = md.facts.slice(0, 3);
+const host = (u: string) => new URL(u).host.replace(/^www\./, '');
 const title = active.length > 0 ? `${md.name} Deals, Discounts & Store Policies` : `${md.name} Shipping, Returns & Shopping Tips`;
-const description = active.length > 0
-  ? `${active.length} active ${md.name} ${active.length === 1 ? 'offer' : 'offers'}, plus ${md.name}'s shipping and return policies with sources and when we last checked them.`
-  : `${md.name}'s shipping and return policies with sources, and practical tips for shopping at ${md.domain}.`;
+const description =
+  active.length > 0
+    ? `${active.length} active ${md.name} ${active.length === 1 ? 'offer' : 'offers'}, plus ${md.name}'s shipping and return policies with sources and when we last checked them.`
+    : `${md.name}'s shipping and return policies with sources, and practical tips for shopping at ${md.domain}.`;
 ---
 
 <BaseLayout title={title} description={description.slice(0, 160)} canonicalPath={`/stores/${merchant.id}/`} noindex={!isStoreIndexable(merchant, active.length)}>
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-8 sm:py-10">
-      <Breadcrumbs items={[{ name: 'Stores', href: '/stores/' }, { name: md.name, href: `/stores/${merchant.id}/` }]} />
-      <div class="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-4">
-          <Monogram name={md.name} size="lg" />
-          <div>
-            <h1 class="display text-3xl font-semibold sm:text-4xl">{md.name} deals &amp; policies</h1>
-            <p class="text-ink-2 mt-1.5 max-w-2xl">{md.tagline}</p>
+  <div class="container-page pt-7">
+    <Breadcrumbs items={[{ name: 'Stores', href: '/stores/' }, { name: md.name, href: `/stores/${merchant.id}/` }]} />
+
+    <section class="bg-shell relative mt-6 overflow-hidden rounded-[28px] p-6 sm:p-10">
+      <svg aria-hidden="true" viewBox="0 0 200 200" class="pointer-events-none absolute -top-20 -right-16 hidden h-96 w-96 opacity-[0.1] md:block">
+        <circle cx="100" cy="100" r="98" fill="none" stroke="#0e1a35" stroke-width=".6" stroke-dasharray="2 3"></circle><circle cx="100" cy="100" r="66" fill="none" stroke="#0e1a35" stroke-width=".6"></circle><circle cx="100" cy="100" r="34" fill="none" stroke="#0e1a35" stroke-width=".6" stroke-dasharray="2 3"></circle>
+      </svg>
+      <div class="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+        <div>
+          <div class="flex flex-wrap items-center gap-3">
+            <Monogram name={md.name} tone="solid" />
+            <p class="eyebrow">Store guide</p>
           </div>
+          <h1 class="display mt-5 text-[2.5rem] leading-[1.05] font-semibold sm:text-[3.25rem]">{md.name} deals &amp; policies</h1>
+          <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">{md.tagline}</p>
+          {
+            latestFact && (
+              <p class="text-ink-2 mt-5 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+                <span class="flex items-center gap-1.5"><Icon name="check-circle" class="text-positive h-4 w-4" /> Policies checked {formatDate(latestFact)}</span>
+                <span class="flex items-center gap-1.5"><Icon name="receipt" class="text-accent-strong h-4 w-4" /> {active.length} active {active.length === 1 ? 'offer' : 'offers'}</span>
+              </p>
+            )
+          }
         </div>
-        <StoreLink merchant={merchant} placement="store-header" class="btn-ghost shrink-0" />
+        <div class="lg:max-w-xs lg:text-right">
+          <StoreLink merchant={merchant} placement="store-header" class="btn-dark !min-h-12 !px-6" />
+          <p class="text-muted mt-3 text-xs leading-relaxed">
+            {affiliate
+              ? `We may earn a commission when you buy from ${md.name} through some links, at no extra cost to you.`
+              : `We don't currently earn a commission from ${md.name}.`}{' '}
+            {md.name} has not reviewed or endorsed this page. <a href="/affiliate-disclosure/" class="underline underline-offset-2">Disclosure</a>
+          </p>
+        </div>
       </div>
-      <p class="text-muted mt-5 flex items-start gap-2 text-sm">
-        <Icon name="info" class="mt-0.5 h-4 w-4 shrink-0" />
-        <span>
-          {affiliate
-            ? `We may earn a commission when you buy from ${md.name} through some links on this page, at no extra cost to you.`
-            : `We don't currently earn a commission from ${md.name}. Links on this page go directly to ${md.domain}.`}{' '}
-          {md.name} has not reviewed or endorsed this page. <a href="/affiliate-disclosure/" class="underline underline-offset-2">Disclosure</a>
-        </span>
-      </p>
-    </div>
+    </section>
+
+    {
+      tiles.length > 0 && (
+        <ul class="mt-5 grid gap-4 md:grid-cols-3">
+          {tiles.map((f) => (
+            <li class="card flex flex-col p-6">
+              <span class="flex items-center justify-between">
+                <span class="pill bg-shell text-ink-2 !normal-case !tracking-normal">{f.label}</span>
+                <Icon name={factIcon(f.label)} class="text-accent-strong h-5 w-5" />
+              </span>
+              <p class="display text-ink mt-4 text-[1.55rem] leading-tight font-medium">{f.short ?? f.label}</p>
+              <p class="text-ink-2 mt-2 line-clamp-3 text-sm leading-relaxed">{f.value}</p>
+              <p class="text-muted mt-auto pt-4 text-xs">
+                Source: <a href={f.sourceUrl} rel="nofollow noopener" target="_blank" class="underline underline-offset-2">{host(f.sourceUrl)}</a> · checked {formatDate(f.checkedAt)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </div>
 
-  <div class="container-page py-10">
+  <div class="container-page py-14">
     <section aria-labelledby="offers">
-      <h2 id="offers" class="display text-2xl font-semibold">
-        {active.length > 0 ? `Active ${md.name} offers (${active.length})` : `No active ${md.name} offers right now`}
+      <p class="eyebrow">Offers</p>
+      <h2 id="offers" class="display mt-1 text-[2rem] leading-tight font-semibold">
+        {active.length > 0 ? `Active ${md.name} offers` : `No active ${md.name} offers right now`}
       </h2>
       {
         active.length > 0 ? (
-          <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {active.map((d) => <DealCard deal={d} merchant={merchant} />)}
           </div>
         ) : (
           <p class="text-ink-2 mt-3 max-w-2xl">
-            We haven't confirmed a current offer from {md.name}. The store information below is still current as of the dates shown. Browse <a href="/deals/" class="link">all active deals</a> instead.
+            We haven't confirmed a current offer from {md.name}. The store information on this page is still current as of the dates shown. Browse <a href="/deals/" class="link">all active deals</a> instead.
           </p>
         )
       }
     </section>
 
-    <div class="mt-14 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
-      <div class="min-w-0">
-        <section aria-labelledby="about-store">
-          <h2 id="about-store" class="display text-2xl font-semibold">About shopping at {md.name}</h2>
-          <div class="prose-editorial mt-3">{overview.map((p) => <p>{p}</p>)}</div>
-        </section>
-
+    <div class="mt-16 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-8">
+      <div class="card min-w-0 p-6 sm:p-9">
+        <p class="eyebrow">Editorial briefing</p>
+        <h2 class="display mt-1 text-[2rem] leading-tight font-semibold">About shopping at {md.name}</h2>
+        <div class="prose-editorial mt-4">{overview.map((p) => <p>{p}</p>)}</div>
         {
           md.tips.length > 0 && (
-            <section class="mt-10" aria-labelledby="tips">
-              <h2 id="tips" class="display text-2xl font-semibold">Tips for saving at {md.name}</h2>
+            <>
+              <h3 class="display text-ink mt-10 text-[1.5rem] font-medium">Tips for saving at {md.name}</h3>
               <ul class="mt-4 space-y-3">
                 {md.tips.map((t) => (
-                  <li class="text-ink-2 flex gap-3 leading-relaxed">
-                    <Icon name="check" class="text-positive mt-1 h-4.5 w-4.5 shrink-0" />
+                  <li class="bg-shell text-ink-2 flex gap-3 rounded-xl p-4 leading-relaxed">
+                    <Icon name="check-circle" class="text-positive mt-0.5 h-5 w-5 shrink-0" />
                     <span>{t}</span>
                   </li>
                 ))}
               </ul>
-            </section>
+            </>
           )
         }
       </div>
 
-      <aside class="lg:self-start" aria-labelledby="policies">
-        <div class="card p-5 sm:p-6">
-          <h2 id="policies" class="text-ink font-semibold">Store policies at a glance</h2>
+      <aside class="lg:sticky lg:top-36 lg:self-start" aria-labelledby="policies">
+        <div class="card p-6">
+          <h2 id="policies" class="display text-ink flex items-center gap-2 text-xl font-semibold"><Icon name="receipt" class="text-accent-strong h-5 w-5" /> Policies at a glance</h2>
           {
             md.facts.length > 0 ? (
               <dl class="divide-line mt-3 divide-y">
@@ -110,7 +147,7 @@ const description = active.length > 0
                     <dd class="text-ink-2 mt-1 text-sm leading-relaxed">
                       {f.value}
                       <span class="text-muted mt-1.5 block text-xs">
-                        Source: <a href={f.sourceUrl} rel="nofollow noopener" target="_blank" class="underline underline-offset-2">{new URL(f.sourceUrl).host.replace(/^www\./, '')}</a> · checked {formatDate(f.checkedAt)}
+                        Source: <a href={f.sourceUrl} rel="nofollow noopener" target="_blank" class="underline underline-offset-2">{host(f.sourceUrl)}</a> · checked {formatDate(f.checkedAt)}
                       </span>
                     </dd>
                   </div>
@@ -122,9 +159,7 @@ const description = active.length > 0
           }
           <p class="text-muted border-line mt-2 border-t pt-4 text-xs leading-relaxed">Policies change. The store's own terms at checkout always apply.</p>
         </div>
-        <p class="text-muted mt-4 text-sm">
-          Categories: {md.categories.map((c, i) => <>{i > 0 && ', '}<span>{getCategory(c)?.name}</span></>)}
-        </p>
+        <p class="text-muted mt-4 text-sm">Categories: {md.categories.map((c) => getCategory(c)?.name).join(', ')}</p>
       </aside>
     </div>
 
@@ -146,9 +181,10 @@ const description = active.length > 0
 
     {
       generalGuides.length > 0 && (
-        <section class="mt-14" aria-labelledby="guides">
-          <h2 id="guides" class="display text-2xl font-semibold">Helpful guides</h2>
-          <div class="mt-5 grid gap-4 md:grid-cols-3">
+        <section class="mt-16" aria-labelledby="guides">
+          <p class="eyebrow">Read first</p>
+          <h2 id="guides" class="display mt-1 text-[2rem] leading-tight font-semibold">Helpful guides</h2>
+          <div class="mt-6 grid gap-5 md:grid-cols-3">
             {generalGuides.slice(0, 3).map((g) => <GuideCard guide={g} />)}
           </div>
         </section>

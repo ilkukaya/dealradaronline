@@ -14,10 +14,12 @@ tips:
   - Buying with a Home Depot credit card extends the return window, but only use store credit if you would have bought the item anyway.
 facts:
   - label: Standard returns
+    short: 90-day returns on most items
     value: Most merchandise can be returned within 90 days with proof of purchase. Major appliances must be returned within 48 hours; some categories such as TVs, computers, and furniture have 30 days.
     sourceUrl: https://www.homedepot.com/c/Return_Policy
     checkedAt: 2026-10-16
   - label: Card-purchase returns
+    short: 365 days with a store card
     value: Purchases made with a Home Depot consumer or commercial credit card can be returned within 365 days, with the same category exceptions.
     sourceUrl: https://www.homedepot.com/c/Return_Policy
     checkedAt: 2026-10-16

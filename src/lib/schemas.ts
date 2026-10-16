@@ -40,6 +40,8 @@ export const affiliateProgramSchema = z.object({
 
 export const storeFactSchema = z.object({
   label: z.string().min(2),
+  /** Optional short headline for the store-page stat tiles, e.g. "Free shipping over $35". */
+  short: z.string().max(48).optional(),
   value: z.string().min(2),
   sourceUrl: httpsUrl,
   checkedAt: dateLike,

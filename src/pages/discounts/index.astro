@@ -1,30 +1,43 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
-import { getOfferTypesWithContent } from '../../lib/catalog';
+import Icon from '../../components/ui/Icon.astro';
+import { programShortName, programStyle } from '../../config/styles';
+import { getMerchantMap, getOfferTypesWithContent } from '../../lib/catalog';
 
-const programs = await getOfferTypesWithContent();
+const [programs, merchants] = await Promise.all([getOfferTypesWithContent(), getMerchantMap()]);
+const storesFor = (p: (typeof programs)[number]) => [...new Set(p.deals.map((d) => merchants.get(d.data.merchant)?.data.name ?? ''))].filter(Boolean);
 ---
 
 <BaseLayout title="Discount Programs: Student, Military, Free Trials & More" description="Standing discounts grouped by who qualifies — students, military families, government assistance recipients — plus free trials and free shipping offers." canonicalPath="/discounts/">
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-8 sm:py-10">
-      <Breadcrumbs items={[{ name: 'Discounts', href: '/discounts/' }]} />
-      <h1 class="display mt-4 text-4xl font-semibold">Discount programs</h1>
-      <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">
-        Many of the best savings are standing programs, not flash sales. They're grouped here by who qualifies or what kind of saving they are.
-      </p>
-    </div>
+  <div class="container-page pt-7">
+    <Breadcrumbs items={[{ name: 'Discounts', href: '/discounts/' }]} />
+    <p class="eyebrow mt-6">Discount programs</p>
+    <h1 class="display mt-2 text-[2.75rem] leading-[1.02] font-semibold sm:text-[3.5rem]">Find savings by who you are</h1>
+    <p class="text-ink-2 mt-4 max-w-2xl text-lg leading-relaxed">
+      Many of the best savings are standing programs, not flash sales. They're grouped here by who qualifies or what kind of saving they are.
+    </p>
   </div>
-  <div class="container-page grid gap-4 py-10 md:grid-cols-2">
+  <div class="container-page grid gap-4 py-10 md:grid-cols-2 lg:grid-cols-6">
     {
-      programs.map((p) => (
-        <a href={`/discounts/${p.slug}/`} class="card group block p-6 no-underline hover:shadow-[var(--shadow-lift)]">
-          <h2 class="display text-ink text-2xl font-semibold group-hover:underline">{p.name}</h2>
-          <p class="text-ink-2 mt-2 leading-relaxed">{p.description}</p>
-          <p class="text-accent-strong mt-3 text-sm font-semibold">{p.deals.length} active offers</p>
-        </a>
-      ))
+      programs.map((p, i) => {
+        const st = programStyle[p.slug];
+        const names = storesFor(p);
+        return (
+          <a href={`/discounts/${p.slug}/`} class:list={['group card-hover flex flex-col rounded-[var(--radius-card)] p-7 no-underline', st.tint, i < 2 ? 'lg:col-span-3' : 'lg:col-span-2']}>
+            <span class="flex items-center justify-between">
+              <span class:list={['flex h-12 w-12 items-center justify-center rounded-2xl bg-white', st.text]}><Icon name={st.icon} class="h-6 w-6" /></span>
+              <span class:list={['pill bg-white', st.text]}>{p.deals.length} offers</span>
+            </span>
+            <h2 class="display text-ink mt-6 text-[1.9rem] leading-tight font-medium">{programShortName[p.slug]}</h2>
+            <p class="text-ink-2 mt-2 leading-relaxed">{p.description}</p>
+            <span class:list={['mt-auto flex items-center justify-between gap-3 pt-6 text-sm font-bold', st.text]}>
+              <span class="truncate">{names.join(', ')}</span>
+              <Icon name="arrow" class="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </a>
+        );
+      })
     }
   </div>
 </BaseLayout>

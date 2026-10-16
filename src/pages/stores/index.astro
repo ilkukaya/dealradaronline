@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
 import StoreCard from '../../components/ui/StoreCard.astro';
+import Icon from '../../components/ui/Icon.astro';
 import { getActiveDeals, getPublishedMerchants } from '../../lib/catalog';
 
 const [merchants, active] = await Promise.all([getPublishedMerchants(), getActiveDeals()]);
@@ -13,21 +14,47 @@ const rows = merchants.map((m) => ({ merchant: m, count: active.filter((d) => d.
   description="Browse the US stores we cover. Each store page lists active offers, shipping and return policies with sources, and practical shopping tips."
   canonicalPath="/stores/"
 >
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-8 sm:py-10">
-      <Breadcrumbs items={[{ name: 'Stores', href: '/stores/' }]} />
-      <h1 class="display mt-4 text-4xl font-semibold">Stores</h1>
-      <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">
-        The retailers and services we currently cover. Each page collects active offers along with the store's shipping and return rules, linked to the store's own policy pages.
-      </p>
+  <div class="container-page pt-7">
+    <Breadcrumbs items={[{ name: 'Stores', href: '/stores/' }]} />
+    <div class="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div>
+        <p class="eyebrow">Store directory</p>
+        <h1 class="display mt-2 text-[2.75rem] leading-none font-semibold sm:text-[3.5rem]">Stores</h1>
+        <p class="text-ink-2 mt-4 max-w-2xl text-lg leading-relaxed">
+          The retailers and services we cover. Each page collects active offers plus the store's shipping and return rules, linked to its own policy pages.
+        </p>
+      </div>
+      <div class="w-full md:max-w-xs">
+        <label for="store-q" class="sr-only">Find a store</label>
+        <div class="relative">
+          <Icon name="search" class="text-faint pointer-events-none absolute top-1/2 left-3.5 h-4.5 w-4.5 -translate-y-1/2" />
+          <input id="store-q" type="search" placeholder="Find a store" autocomplete="off" class="focus:ring-ink/15 h-12 w-full rounded-full bg-white pr-4 pl-10 shadow-[0_2px_12px_rgba(14,26,53,0.06)] outline-none focus:ring-2" data-store-search />
+        </div>
+      </div>
     </div>
   </div>
   <div class="container-page py-10">
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-store-grid>
       {rows.map((r) => <StoreCard merchant={r.merchant} offerCount={r.count} headingLevel="h2" />)}
     </div>
+    <p class="text-muted mt-6 hidden text-center" data-store-empty>No stores match that search.</p>
     <p class="text-muted mt-10 max-w-3xl text-sm leading-relaxed">
       Listing a store does not mean it endorses or sponsors us. Store names are trademarks of their owners. Want your store covered? See <a href="/partners/" class="link">Work with us</a>.
     </p>
   </div>
+  <script>
+    const input = document.querySelector<HTMLInputElement>('[data-store-search]');
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-store-card]'));
+    const empty = document.querySelector<HTMLElement>('[data-store-empty]');
+    input?.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      let shown = 0;
+      cards.forEach((c) => {
+        const match = !q || (c.dataset.search ?? '').includes(q);
+        c.hidden = !match;
+        if (match) shown++;
+      });
+      empty?.classList.toggle('hidden', shown > 0);
+    });
+  </script>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import Logo from '../ui/Logo.astro';
 import Icon from '../ui/Icon.astro';
 import { getCategoriesWithContent, getOfferTypesWithContent } from '../../lib/catalog';
+import { programShortName, programStyle } from '../../config/styles';
 
 const path = Astro.url.pathname;
 const [cats, programs] = await Promise.all([getCategoriesWithContent(), getOfferTypesWithContent()]);
@@ -12,32 +13,37 @@ const nav = [
   { href: '/guides/', label: 'Guides' },
 ];
 const isCurrent = (href: string) => path === href || path.startsWith(href);
+const chips = [
+  ...programs.map((p) => ({ href: `/discounts/${p.slug}/`, label: programShortName[p.slug], icon: programStyle[p.slug].icon, track: `program:${p.slug}` })),
+  ...cats.map((c) => ({ href: `/categories/${c.slug}/`, label: c.name, icon: c.icon, track: c.slug })),
+];
 ---
 
-<aside aria-label="Affiliate disclosure" class="bg-ink text-[0.8rem] text-white/85">
-  <p class="container-page py-2 text-center">
-    Independent and reader-supported. We may earn a commission from some links, at no cost to you.{' '}
-    <a href="/affiliate-disclosure/" class="font-semibold whitespace-nowrap text-white underline decoration-white/40 underline-offset-2 hover:decoration-white">
-      How this works
-    </a>
+<aside aria-label="Affiliate disclosure" class="bg-shell text-ink-2 border-line border-b text-[0.8rem]">
+  <p class="container-page flex items-center justify-center gap-2 py-2 text-center">
+    <span class="bg-accent hidden h-1.5 w-1.5 shrink-0 rounded-full sm:inline-block" aria-hidden="true"></span>
+    <span>
+      Independent and reader-supported. We may earn a commission from some links, at no cost to you.{' '}
+      <a href="/affiliate-disclosure/" class="text-accent-deep font-semibold whitespace-nowrap underline underline-offset-2">How this works →</a>
+    </span>
   </p>
 </aside>
 
-<header class="border-line sticky top-0 z-40 border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
-  <div class="container-page flex h-16 items-center gap-4">
-    <a href="/" class="-ml-1 rounded-lg p-1 no-underline" aria-label="Home">
+<header class="sticky top-0 z-40 bg-white/95 shadow-[0_1px_8px_rgba(14,26,53,0.05)] backdrop-blur supports-[backdrop-filter]:bg-white/85">
+  <div class="container-page flex h-16 items-center gap-4 lg:h-[4.5rem]">
+    <a href="/" class="-ml-1 shrink-0 rounded-lg p-1 no-underline" aria-label="Home">
       <Logo />
     </a>
 
-    <nav aria-label="Main" class="ml-6 hidden md:block">
-      <ul class="flex items-center gap-1">
+    <nav aria-label="Main" class="ml-4 hidden h-full md:block">
+      <ul class="flex h-full items-center gap-1">
         {
           nav.map((item) => (
-            <li>
+            <li class="h-full">
               <a
                 href={item.href}
                 aria-current={isCurrent(item.href) ? 'page' : undefined}
-                class="text-ink-2 hover:bg-canvas hover:text-ink aria-[current=page]:text-ink rounded-full px-3.5 py-2 text-[0.95rem] font-medium no-underline aria-[current=page]:font-semibold"
+                class="text-ink-2 hover:text-ink aria-[current=page]:text-accent-deep aria-[current=page]:border-accent-strong flex h-full items-center border-b-2 border-transparent px-3 text-[0.95rem] font-semibold no-underline"
               >
                 {item.label}
               </a>
@@ -47,7 +53,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
       </ul>
     </nav>
 
-    <form action="/deals/" method="get" role="search" aria-label="Site search" class="ml-auto hidden w-full max-w-xs lg:block">
+    <form action="/deals/" method="get" role="search" aria-label="Site search" class="ml-auto hidden w-full max-w-sm lg:block">
       <label for="header-search" class="sr-only">Search deals and stores</label>
       <div class="relative">
         <Icon name="search" class="text-faint pointer-events-none absolute top-1/2 left-3.5 h-4.5 w-4.5 -translate-y-1/2" />
@@ -56,8 +62,8 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
           name="q"
           type="search"
           autocomplete="off"
-          placeholder="Search deals and stores"
-          class="border-line bg-canvas focus:border-ink placeholder:text-faint h-10 w-full rounded-full border pr-4 pl-10 text-[0.95rem] outline-none focus:bg-white"
+          placeholder="Search deals and stores…"
+          class="bg-shell focus:ring-ink/20 placeholder:text-faint h-11 w-full rounded-full border border-transparent pr-4 pl-10 text-[0.95rem] outline-none focus:bg-white focus:ring-2"
         />
       </div>
     </form>
@@ -67,16 +73,16 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
     </a>
 
     <details class="group ml-auto md:hidden" data-mobile-menu>
-      <summary class="border-line text-ink flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border [&::-webkit-details-marker]:hidden" aria-label="Open menu">
+      <summary class="bg-shell text-ink flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full [&::-webkit-details-marker]:hidden" aria-label="Open menu">
         <Icon name="menu" class="h-5 w-5 group-open:hidden" />
         <Icon name="close" class="hidden h-5 w-5 group-open:block" />
       </summary>
-      <div class="border-line shadow-lift absolute inset-x-0 top-full max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-b bg-white px-4 pt-4 pb-8">
+      <div class="border-line shadow-float absolute inset-x-0 top-full max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-b bg-white px-4 pt-4 pb-8">
         <form action="/deals/" method="get" role="search" aria-label="Mobile site search" class="mb-5">
           <label for="mobile-search" class="sr-only">Search deals and stores</label>
           <div class="relative">
             <Icon name="search" class="text-faint pointer-events-none absolute top-1/2 left-3.5 h-5 w-5 -translate-y-1/2" />
-            <input id="mobile-search" name="q" type="search" placeholder="Search deals and stores" class="field pl-11" />
+            <input id="mobile-search" name="q" type="search" placeholder="Search deals and stores…" class="field rounded-full pl-11" />
           </div>
         </form>
         <nav aria-label="Mobile">
@@ -84,27 +90,28 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
             {
               nav.map((item) => (
                 <li>
-                  <a href={item.href} class="text-ink flex items-center justify-between py-3.5 text-lg font-semibold no-underline">
+                  <a href={item.href} class="display text-ink flex items-center justify-between py-3.5 text-2xl font-semibold no-underline">
                     {item.label} <Icon name="arrow" class="text-faint h-4 w-4" />
                   </a>
                 </li>
               ))
             }
             <li>
-              <a href="/newsletter/" class="text-accent-strong flex items-center justify-between py-3.5 text-lg font-semibold no-underline">
+              <a href="/newsletter/" class="text-accent-deep flex items-center justify-between py-3.5 text-lg font-semibold no-underline">
                 Get email updates <Icon name="mail" class="h-5 w-5" />
               </a>
             </li>
           </ul>
         </nav>
         {
-          cats.length > 0 && (
+          chips.length > 0 && (
             <div class="mt-6">
-              <p class="eyebrow mb-3">Categories</p>
+              <p class="eyebrow mb-3">Browse</p>
               <div class="flex flex-wrap gap-2">
-                {cats.map((c) => (
-                  <a href={`/categories/${c.slug}/`} class="chip">
-                    {c.name}
+                {chips.map((c) => (
+                  <a href={c.href} class="chip">
+                    <Icon name={c.icon} class="h-4 w-4" />
+                    {c.label}
                   </a>
                 ))}
               </div>
@@ -116,35 +123,20 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
   </div>
 
   {
-    (cats.length > 0 || programs.length > 0) && (
-      <nav aria-label="Categories" class="border-line hidden border-t md:block">
-        <ul class="container-page flex h-11 items-center gap-1 overflow-x-auto text-sm whitespace-nowrap [scrollbar-width:none]">
-          {programs.map((p) => (
+    chips.length > 0 && (
+      <nav aria-label="Categories" class="border-line/70 hidden border-t md:block">
+        <ul class="container-page flex items-center gap-2 overflow-x-auto py-2.5 whitespace-nowrap [scrollbar-width:none]">
+          {chips.map((c) => (
             <li>
               <a
-                href={`/discounts/${p.slug}/`}
+                href={c.href}
                 data-track="Category Select"
-                data-track-props={JSON.stringify({ category: `program:${p.slug}` })}
-                aria-current={path === `/discounts/${p.slug}/` ? 'page' : undefined}
-                class="text-muted hover:text-ink aria-[current=page]:text-ink rounded-md px-2.5 py-1.5 font-medium no-underline aria-[current=page]:font-semibold"
+                data-track-props={JSON.stringify({ category: c.track })}
+                aria-current={path === c.href ? 'page' : undefined}
+                class="chip !min-h-8 !px-3 !text-[0.78rem]"
               >
-                {p.name.replace('Discounts for Government Assistance Recipients', 'Assistance Discounts')}
-              </a>
-            </li>
-          ))}
-          {programs.length > 0 && cats.length > 0 && (
-            <li aria-hidden="true" class="bg-line mx-2 h-4 w-px" />
-          )}
-          {cats.map((c) => (
-            <li>
-              <a
-                href={`/categories/${c.slug}/`}
-                data-track="Category Select"
-                data-track-props={JSON.stringify({ category: c.slug })}
-                aria-current={path === `/categories/${c.slug}/` ? 'page' : undefined}
-                class="text-muted hover:text-ink aria-[current=page]:text-ink rounded-md px-2.5 py-1.5 font-medium no-underline aria-[current=page]:font-semibold"
-              >
-                {c.name}
+                <Icon name={c.icon} class="h-3.5 w-3.5" />
+                {c.label}
               </a>
             </li>
           ))}

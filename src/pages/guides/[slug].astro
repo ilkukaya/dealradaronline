@@ -49,36 +49,46 @@ const articleLd = {
 
 <BaseLayout title={g.title} description={g.description} canonicalPath={`/guides/${guide.id}/`} type="article" publishedTime={g.publishedAt} modifiedTime={modified} image={ogImageFor('guides', guide.id)}>
   <JsonLd slot="head" data={articleLd} />
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-8 sm:py-12">
-      <Breadcrumbs items={[{ name: 'Guides', href: '/guides/' }, { name: g.title, href: `/guides/${guide.id}/` }]} />
-      <div class="max-w-3xl">
-        <p class="eyebrow mt-6">Shopping guide</p>
-        <h1 class="display mt-2 text-[2.1rem] leading-[1.12] font-semibold sm:text-5xl">{g.title}</h1>
-        <p class="text-ink-2 mt-4 text-xl leading-relaxed">{g.summary}</p>
-        <p class="text-muted mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-          <span>By the {site.name} editors</span>
-          <span>{g.updatedAt ? 'Updated' : 'Published'} <time datetime={modified.toISOString()}>{formatDate(modified)}</time></span>
-          <span>{readingMinutes(guide.body)} min read</span>
-        </p>
-        <div class="mt-5"><ShareLinks path={`/guides/${guide.id}/`} title={g.title} pinImage={pinImageFor(guide.id) ?? ogImageFor('guides', guide.id)} /></div>
+  <div class="container-page pt-7 pb-10">
+    <Breadcrumbs items={[{ name: 'Guides', href: '/guides/' }, { name: g.title, href: `/guides/${guide.id}/` }]} />
+    <div class="max-w-4xl">
+      <p class="mt-6 flex flex-wrap items-center gap-2">
+        <span class="pill bg-accent-soft text-accent-deep">Shopping guide{g.tags[0] ? ` · ${g.tags[0]}` : ''}</span>
+      </p>
+      <h1 class="display mt-4 text-[2.4rem] leading-[1.05] font-semibold sm:text-[3.6rem]">{g.title}</h1>
+      <p class="text-ink-2 mt-5 max-w-3xl text-xl leading-relaxed">{g.summary}</p>
+    </div>
+    <div class="border-line mt-8 flex flex-col gap-4 border-y py-4 md:flex-row md:items-center md:justify-between">
+      <div class="flex items-center gap-3">
+        <span class="bg-ink display flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold text-white" aria-hidden="true">DR</span>
+        <div>
+          <p class="text-ink text-sm font-semibold">{site.name} editors</p>
+          <p class="text-muted text-sm">
+            {g.updatedAt ? 'Updated' : 'Published'} <time datetime={modified.toISOString()}>{formatDate(modified)}</time> · {readingMinutes(guide.body)} min read
+          </p>
+        </div>
       </div>
+      <ShareLinks path={`/guides/${guide.id}/`} title={g.title} pinImage={pinImageFor(guide.id) ?? ogImageFor('guides', guide.id)} />
     </div>
   </div>
 
-  <div class="container-page grid gap-12 py-10 lg:grid-cols-[minmax(0,1fr)_280px]">
-    <article class="prose-editorial max-w-3xl min-w-0">
+  <div class="container-page grid gap-12 pb-10 lg:grid-cols-[minmax(0,1fr)_300px]">
+    <article class="prose-editorial guide-body max-w-3xl min-w-0">
       <Content />
     </article>
     <aside class="hidden lg:block">
       {
         toc.length > 2 && (
-          <nav aria-label="On this page" class="sticky top-24">
-            <p class="text-ink text-sm font-semibold">On this page</p>
-            <ol class="border-line mt-3 space-y-2 border-l pl-4 text-sm">
-              {toc.map((h) => (
-                <li>
-                  <a href={`#${h.slug}`} class="text-muted hover:text-ink hover:underline">{h.text}</a>
+          <nav aria-label="On this page" class="card sticky top-36 p-5">
+            <p class="flex items-center justify-between text-[0.72rem] font-bold tracking-[0.12em] uppercase">
+              <span class="text-ink">On this page</span>
+              <span class="text-accent-deep">{toc.length} sections</span>
+            </p>
+            <ol class="mt-4 space-y-2.5 text-sm">
+              {toc.map((h, i) => (
+                <li class="flex gap-3">
+                  <span class="text-faint tabular font-mono text-xs leading-5">{String(i + 1).padStart(2, '0')}</span>
+                  <a href={`#${h.slug}`} class="text-ink-2 hover:text-ink leading-5 hover:underline">{h.text}</a>
                 </li>
               ))}
             </ol>
@@ -89,7 +99,7 @@ const articleLd = {
   </div>
 
   <div class="container-page">
-    <div class="bg-navy-soft/60 max-w-3xl rounded-2xl p-5 text-sm leading-relaxed sm:p-6">
+    <div class="bg-navy-soft max-w-3xl rounded-[var(--radius-card)] p-5 text-sm leading-relaxed sm:p-6">
       <p class="text-ink flex items-center gap-2 font-semibold"><Icon name="shield" class="h-5 w-5" /> About this guide</p>
       <p class="text-ink-2 mt-2">
         Written by the {site.name} editors for general information only — it isn't legal or financial advice. Store policies vary and change; check the store's current terms before you buy. See our <a href="/editorial-policy/" class="link">editorial policy</a>.
@@ -99,7 +109,7 @@ const articleLd = {
     {
       deals.length > 0 && (
         <section class="mt-14" aria-labelledby="deals">
-          <h2 id="deals" class="display text-2xl font-semibold">Offers mentioned in this guide</h2>
+          <h2 id="deals" class="display text-[2rem] font-semibold">Offers mentioned in this guide</h2>
           <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {deals.map((d) => <DealCard deal={d} merchant={merchants.get(d.data.merchant)!} />)}
           </div>
@@ -108,8 +118,8 @@ const articleLd = {
     }
 
     <section class="mt-14" aria-labelledby="more">
-      <h2 id="more" class="display text-2xl font-semibold">Keep reading</h2>
-      <div class="mt-5 grid gap-4 md:grid-cols-3">
+      <h2 id="more" class="display text-[2rem] font-semibold">Keep reading</h2>
+      <div class="mt-6 grid gap-5 md:grid-cols-3">
         {related.map((r) => <GuideCard guide={r} />)}
       </div>
     </section>

@@ -1,0 +1,40 @@
+---
+/** Compact horizontal deal card ("New on the radar"). */
+import Monogram from '../ui/Monogram.astro';
+import Icon from '../ui/Icon.astro';
+import OutboundButton from './OutboundButton.astro';
+import { getOfferType } from '../../config/taxonomy';
+import { programStyle } from '../../config/styles';
+import { formatDate, getHeadline } from '../../lib/deal-utils';
+import type { Deal, Merchant } from '../../lib/catalog';
+
+interface Props {
+  deal: Deal;
+  merchant: Merchant;
+}
+const { deal, merchant } = Astro.props;
+const d = deal.data;
+const type = getOfferType(d.offerType);
+const style = programStyle[d.offerType];
+const headline = getHeadline(d);
+---
+
+<article class="card card-hover relative flex gap-4 p-5" data-row-type={d.offerType} data-expires={d.endDate?.toISOString()} data-expire-action="hide">
+  <Monogram name={merchant.data.name} size="sm" />
+  <div class="flex min-w-0 flex-1 flex-col">
+    <p class="flex flex-wrap items-center gap-2 text-xs">
+      <span class="text-ink font-semibold">{merchant.data.name}</span>
+      <span class:list={['pill', style.tint, style.text]}>{type?.label}</span>
+    </p>
+    <h3 class="display mt-1.5 text-[1.25rem] leading-snug font-medium">
+      <a href={`/deals/${deal.id}/`} class="text-ink after:absolute after:inset-0 hover:underline decoration-1 underline-offset-4" data-track="Deal Click" data-track-props={JSON.stringify({ deal: deal.id, placement: 'radar' })}>
+        <span class="tabular font-semibold">{headline.value}</span>{headline.note ? ` ${headline.note}` : ''}
+      </a>
+    </h3>
+    <p class="text-ink-2 mt-1 line-clamp-2 text-sm leading-relaxed">{d.title}</p>
+    <div class="mt-auto flex items-center justify-between gap-3 pt-4">
+      <span class="text-muted flex items-center gap-1.5 text-xs font-medium"><Icon name="check-circle" class="text-positive h-3.5 w-3.5" /> Checked {formatDate(d.lastVerified)}</span>
+      <span class="relative z-10"><OutboundButton deal={deal} merchant={merchant} placement="radar" class="!min-h-9 !px-4 !text-xs" /></span>
+    </div>
+  </div>
+</article>

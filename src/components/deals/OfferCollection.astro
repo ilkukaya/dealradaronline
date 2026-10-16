@@ -4,9 +4,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs, { type Crumb } from '../layout/Breadcrumbs.astro';
 import DealCard from './DealCard.astro';
 import GuideCard from '../ui/GuideCard.astro';
+import Monogram from '../ui/Monogram.astro';
 import Icon from '../ui/Icon.astro';
 import { getMerchantMap, type Deal, type Guide } from '../../lib/catalog';
-import { formatDate, getHeadline } from '../../lib/deal-utils';
+import { formatDate, formatPriceWithPeriod, getHeadline } from '../../lib/deal-utils';
 
 interface Props {
   title: string;
@@ -18,67 +19,125 @@ interface Props {
   deals: Deal[];
   guides: Guide[];
   eyebrow: string;
+  /** Icon name and tint classes for the hero emblem. */
+  icon?: string;
+  tint?: string;
+  tone?: string;
   showComparison?: boolean;
-  siblings?: { href: string; label: string }[];
+  siblings?: { href: string; label: string; icon?: string }[];
   noindex?: boolean;
 }
-const { title, metaTitle, metaDescription, intro, path, crumbs, deals, guides, eyebrow, showComparison = false, siblings = [], noindex = false } = Astro.props;
+const {
+  title,
+  metaTitle,
+  metaDescription,
+  intro,
+  path,
+  crumbs,
+  deals,
+  guides,
+  eyebrow,
+  icon = 'tag',
+  tint = 'bg-shell',
+  tone = 'text-ink',
+  showComparison = false,
+  siblings = [],
+  noindex = false,
+} = Astro.props;
 const merchants = await getMerchantMap();
 const m = (id: string) => merchants.get(id)!;
+const storeCount = new Set(deals.map((d) => d.data.merchant)).size;
+const latestCheck = deals.length ? new Date(Math.max(...deals.map((d) => d.data.lastVerified.getTime()))) : undefined;
 ---
 
 <BaseLayout title={metaTitle} description={metaDescription} canonicalPath={path} noindex={noindex}>
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-8 sm:py-10">
-      <Breadcrumbs items={crumbs} />
-      <p class="eyebrow mt-5">{eyebrow}</p>
-      <h1 class="display mt-2 text-4xl font-semibold sm:text-[2.75rem]">{title}</h1>
-      <p class="text-ink-2 mt-3 max-w-2xl text-lg leading-relaxed">{intro}</p>
+  <div class="container-page pt-7">
+    <Breadcrumbs items={crumbs} />
+    <section class:list={['relative mt-6 overflow-hidden rounded-[28px] p-6 sm:p-10', tint]}>
+      <svg aria-hidden="true" viewBox="0 0 200 200" class="pointer-events-none absolute top-1/2 -right-24 hidden h-[34rem] w-[34rem] -translate-y-1/2 opacity-[0.09] md:block">
+        <circle cx="100" cy="100" r="98" fill="none" stroke="#0e1a35" stroke-width=".6" stroke-dasharray="2 3"></circle><circle cx="100" cy="100" r="70" fill="none" stroke="#0e1a35" stroke-width=".6"></circle><circle cx="100" cy="100" r="42" fill="none" stroke="#0e1a35" stroke-width=".6"></circle>
+      </svg>
+      <div class="relative grid gap-8 md:grid-cols-[minmax(0,1fr)_220px] md:items-center">
+        <div>
+          <p class:list={['inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-[0.72rem] font-bold tracking-[0.1em] uppercase', tone]}>
+            <Icon name={icon} class="h-3.5 w-3.5" /> {eyebrow}
+          </p>
+          <h1 class="display mt-4 text-[2.5rem] leading-[1.05] font-semibold sm:text-[3.25rem]">{title}</h1>
+          <p class="text-ink-2 mt-4 max-w-2xl text-lg leading-relaxed">{intro}</p>
+          <dl class="mt-7 grid max-w-2xl grid-cols-3 gap-3">
+            <div class="rounded-2xl bg-white p-4"><dt class="text-accent-deep text-[0.68rem] font-bold tracking-[0.1em] uppercase">Active offers</dt><dd class="display text-ink mt-1 text-2xl font-semibold">{deals.length}</dd></div>
+            <div class="rounded-2xl bg-white p-4"><dt class="text-accent-deep text-[0.68rem] font-bold tracking-[0.1em] uppercase">Stores</dt><dd class="display text-ink mt-1 text-2xl font-semibold">{storeCount}</dd></div>
+            <div class="rounded-2xl bg-white p-4"><dt class="text-accent-deep text-[0.68rem] font-bold tracking-[0.1em] uppercase">Last checked</dt><dd class="display text-ink mt-1 text-lg leading-tight font-semibold sm:text-xl">{latestCheck ? formatDate(latestCheck) : '—'}</dd></div>
+          </dl>
+        </div>
+        <div class="hidden md:flex md:justify-center" aria-hidden="true">
+          <div class="shadow-float flex h-44 w-44 items-center justify-center rounded-full bg-white">
+            <div class="bg-shell flex h-28 w-28 items-center justify-center rounded-full">
+              <span class="bg-ink flex h-16 w-16 items-center justify-center rounded-full text-white"><Icon name={icon} class="h-7 w-7" /></span>
+            </div>
+          </div>
+        </div>
+      </div>
       {
         siblings.length > 0 && (
-          <nav aria-label="Related collections" class="mt-6 flex flex-wrap gap-2">
+          <nav aria-label="Related collections" class="relative mt-8 flex flex-wrap gap-2">
             {siblings.map((s) => (
-              <a href={s.href} class="chip" aria-current={s.href === path ? 'page' : undefined}>
+              <a href={s.href} class="chip bg-white" aria-current={s.href === path ? 'page' : undefined}>
+                {s.icon && <Icon name={s.icon} class="h-4 w-4" />}
                 {s.label}
               </a>
             ))}
           </nav>
         )
       }
-    </div>
+    </section>
   </div>
 
-  <div class="container-page py-10">
+  <div class="container-page py-14">
     {
       showComparison && deals.length > 1 && (
-        <section aria-labelledby="compare" class="mb-12">
-          <h2 id="compare" class="display text-2xl font-semibold">At a glance</h2>
-          <div class="card mt-4 overflow-x-auto">
-            <table class="w-full min-w-[640px] text-left text-sm">
-              <thead class="text-muted border-line border-b text-xs tracking-wide uppercase">
+        <section aria-labelledby="compare" class="mb-16">
+          <p class="eyebrow">Side by side</p>
+          <h2 id="compare" class="display mt-1 text-[2rem] leading-tight font-semibold">At a glance</h2>
+          <div class="card mt-6 overflow-hidden">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-shell text-ink-2 hidden text-[0.7rem] tracking-[0.1em] uppercase md:table-header-group">
                 <tr>
-                  <th scope="col" class="px-4 py-3 font-semibold">Store</th>
-                  <th scope="col" class="px-4 py-3 font-semibold">Offer</th>
-                  <th scope="col" class="px-4 py-3 font-semibold">Price / saving</th>
-                  <th scope="col" class="px-4 py-3 font-semibold">Last checked</th>
+                  <th scope="col" class="px-5 py-3.5 font-bold">Store</th>
+                  <th scope="col" class="px-5 py-3.5 font-bold">Offer</th>
+                  <th scope="col" class="px-5 py-3.5 font-bold">Price / saving</th>
+                  <th scope="col" class="px-5 py-3.5 font-bold">Who qualifies</th>
+                  <th scope="col" class="px-5 py-3.5 font-bold">Last checked</th>
                 </tr>
               </thead>
               <tbody class="divide-line divide-y">
-                {deals.map((d) => (
-                  <tr data-expires={d.data.endDate?.toISOString()} data-expire-action="hide">
-                    <td class="text-ink px-4 py-3 font-semibold whitespace-nowrap">
-                      <a href={`/stores/${d.data.merchant}/`} class="hover:underline">{m(d.data.merchant).data.name}</a>
-                    </td>
-                    <td class="px-4 py-3">
-                      <a href={`/deals/${d.id}/`} class="text-ink-2 hover:text-ink hover:underline">{d.data.title}</a>
-                    </td>
-                    <td class="text-ink px-4 py-3 font-semibold whitespace-nowrap">
-                      {getHeadline(d.data).value}
-                      {getHeadline(d.data).note && <span class="text-muted block text-xs font-normal">{getHeadline(d.data).note}</span>}
-                    </td>
-                    <td class="text-muted px-4 py-3 whitespace-nowrap">{formatDate(d.data.lastVerified)}</td>
-                  </tr>
-                ))}
+                {deals.map((d) => {
+                  const h = getHeadline(d.data);
+                  return (
+                    <tr class="grid gap-1 px-5 py-4 md:table-row md:px-0 md:py-0" data-expires={d.data.endDate?.toISOString()} data-expire-action="hide">
+                      <td class="md:px-5 md:py-4">
+                        <a href={`/stores/${d.data.merchant}/`} class="text-ink flex items-center gap-3 font-semibold hover:underline">
+                          <Monogram name={m(d.data.merchant).data.name} size="xs" />
+                          {m(d.data.merchant).data.name}
+                        </a>
+                      </td>
+                      <td class="md:max-w-xs md:px-5 md:py-4">
+                        <a href={`/deals/${d.id}/`} class="text-ink-2 hover:text-ink hover:underline">{d.data.title}</a>
+                      </td>
+                      <td class="text-ink tabular font-semibold md:px-5 md:py-4 md:whitespace-nowrap">
+                        {h.value}
+                        {d.data.referencePrice !== undefined && <s class="text-muted ml-1.5 text-xs font-normal">{formatPriceWithPeriod(d.data.referencePrice, d.data.pricePeriod)}</s>}
+                        {h.note && <span class="text-muted block text-xs font-normal">{h.note}</span>}
+                      </td>
+                      <td class="text-ink-2 md:max-w-[16rem] md:px-5 md:py-4">
+                        <span class="line-clamp-2">{d.data.eligibility ?? '—'}</span>
+                      </td>
+                      <td class="text-positive text-xs font-semibold md:px-5 md:py-4 md:whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1"><Icon name="check-circle" class="h-3.5 w-3.5" /> {formatDate(d.data.lastVerified)}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -87,26 +146,28 @@ const m = (id: string) => merchants.get(id)!;
     }
 
     <section aria-labelledby="offers">
-      <h2 id="offers" class="display text-2xl font-semibold">
+      <p class="eyebrow">Offers</p>
+      <h2 id="offers" class="display mt-1 text-[2rem] leading-tight font-semibold">
         {deals.length} active {deals.length === 1 ? 'offer' : 'offers'}
       </h2>
-      <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {deals.map((d) => <DealCard deal={d} merchant={m(d.data.merchant)} />)}
       </div>
     </section>
 
     {
       guides.length > 0 && (
-        <section class="mt-14" aria-labelledby="guides">
-          <h2 id="guides" class="display text-2xl font-semibold">Related guides</h2>
-          <div class="mt-5 grid gap-4 md:grid-cols-3">
+        <section class="mt-16" aria-labelledby="guides">
+          <p class="eyebrow">Read first</p>
+          <h2 id="guides" class="display mt-1 text-[2rem] leading-tight font-semibold">Related guides</h2>
+          <div class="mt-6 grid gap-5 md:grid-cols-3">
             {guides.slice(0, 3).map((g) => <GuideCard guide={g} />)}
           </div>
         </section>
       )
     }
 
-    <p class="text-muted mt-12 flex items-start gap-2 text-sm">
+    <p class="text-muted mt-14 flex items-start gap-2 text-sm">
       <Icon name="info" class="mt-0.5 h-4 w-4 shrink-0" />
       <span>Offers are listed by date added. We don't accept payment for placement. <a href="/how-we-find-deals/" class="link">How we find deals</a>.</span>
     </p>

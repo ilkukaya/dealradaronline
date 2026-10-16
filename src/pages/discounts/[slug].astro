@@ -1,13 +1,14 @@
 ---
 import OfferCollection from '../../components/deals/OfferCollection.astro';
 import { getOfferTypesWithContent, type OfferTypeWithContent } from '../../lib/catalog';
+import { programShortName, programStyle } from '../../config/styles';
 
 export async function getStaticPaths() {
   const programs = await getOfferTypesWithContent();
   return programs.map((program) => ({ params: { slug: program.slug }, props: { program, all: programs } }));
 }
 const { program, all } = Astro.props as { program: OfferTypeWithContent; all: OfferTypeWithContent[] };
-const short = (p: OfferTypeWithContent) => (p.slug === 'assistance' ? 'Assistance discounts' : p.name);
+const style = programStyle[program.slug];
 ---
 
 <OfferCollection
@@ -16,10 +17,13 @@ const short = (p: OfferTypeWithContent) => (p.slug === 'assistance' ? 'Assistanc
   metaDescription={program.description.slice(0, 160)}
   intro={program.description}
   path={`/discounts/${program.slug}/`}
-  crumbs={[{ name: 'Discounts', href: '/discounts/' }, { name: short(program), href: `/discounts/${program.slug}/` }]}
+  crumbs={[{ name: 'Discounts', href: '/discounts/' }, { name: programShortName[program.slug], href: `/discounts/${program.slug}/` }]}
   deals={program.deals}
   guides={program.guides}
   eyebrow="Discount program"
+  icon={style.icon}
+  tint={style.tint}
+  tone={style.text}
   showComparison
-  siblings={all.map((p) => ({ href: `/discounts/${p.slug}/`, label: short(p) }))}
+  siblings={all.map((p) => ({ href: `/discounts/${p.slug}/`, label: `${programShortName[p.slug]} (${p.deals.length})`, icon: programStyle[p.slug].icon }))}
 />

@@ -1,21 +1,23 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter/wght.css';
-@import '@fontsource-variable/fraunces/wght.css';
+@import '@fontsource-variable/newsreader/wght.css';
+@import '@fontsource-variable/newsreader/wght-italic.css';
 
 @theme {
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Fraunces Variable', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-display: 'Newsreader Variable', ui-serif, Georgia, 'Times New Roman', serif;
 
   /* Deep navy type */
   --color-ink: #0e1a35;
   --color-ink-2: #2b3752;
   --color-muted: #5b6478;
-  --color-faint: #8a92a3;
+  --color-faint: #5f6779;
 
   /* Soft neutrals */
   --color-paper: #ffffff;
-  --color-canvas: #f7f5f1;
-  --color-sand: #efebe4;
+  --color-canvas: #fbf9f5;
+  --color-shell: #f5f3ef;
+  --color-sand: #efeeea;
   --color-line: #e6e2da;
   --color-line-strong: #d6d0c5;
 
@@ -31,11 +33,22 @@
   --color-caution: #8a5a00;
   --color-caution-soft: #fdf4e1;
   --color-navy-soft: #edf0f6;
+  --color-lilac-soft: #f1edfb;
+  --color-lilac: #5b3fa6;
+  --color-navy-card: #1a2744;
 
-  --shadow-card: 0 1px 2px rgb(14 26 53 / 0.04), 0 2px 8px rgb(14 26 53 / 0.04);
-  --shadow-lift: 0 2px 4px rgb(14 26 53 / 0.05), 0 10px 24px rgb(14 26 53 / 0.08);
+  --shadow-card: 0 1px 3px rgb(14 26 53 / 0.04), 0 4px 12px rgb(14 26 53 / 0.03);
+  --shadow-lift: 0 8px 24px -4px rgb(14 26 53 / 0.1);
+  --shadow-float: 0 16px 40px -8px rgb(14 26 53 / 0.14);
 
-  --radius-card: 14px;
+  --radius-card: 18px;
+
+  --animate-sweep: sweep 8s linear infinite;
+  @keyframes sweep {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }
 
 @layer base {
@@ -55,6 +68,12 @@
   h3 {
     @apply text-ink;
     text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+
+  /* Single-column grids must not grow wider than the screen (grid-cols-* utilities override this). */
+  :where(.grid) {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   p {
@@ -89,7 +108,11 @@
 @utility display {
   font-family: var(--font-display);
   font-optical-sizing: auto;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 @utility eyebrow {
@@ -97,8 +120,20 @@
 }
 
 @utility card {
-  @apply bg-paper border-line rounded-[var(--radius-card)] border;
+  @apply bg-paper rounded-[var(--radius-card)] border border-[#ece9e2];
   box-shadow: var(--shadow-card);
+}
+
+@utility card-hover {
+  @apply transition-[box-shadow,transform] duration-200;
+  &:hover {
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-1px);
+  }
+}
+
+@utility pill {
+  @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.68rem] font-bold tracking-[0.06em] uppercase;
 }
 
 @utility btn {
@@ -106,7 +141,11 @@
 }
 
 @utility btn-primary {
-  @apply btn bg-accent-strong hover:bg-accent-deep text-white;
+  @apply btn bg-accent-strong hover:bg-accent-deep text-white shadow-sm;
+}
+
+@utility btn-soft {
+  @apply btn bg-shell text-ink hover:bg-sand;
 }
 
 @utility btn-dark {
@@ -118,10 +157,10 @@
 }
 
 @utility chip {
-  @apply border-line text-ink-2 hover:border-ink-2 inline-flex min-h-9 items-center gap-1.5 rounded-full border bg-white px-3.5 text-sm font-medium no-underline transition-colors;
+  @apply bg-shell text-ink-2 hover:bg-sand hover:text-ink inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold no-underline transition-colors;
   &[aria-pressed='true'],
   &[aria-current='page'] {
-    @apply border-ink bg-ink text-white;
+    @apply bg-ink text-white;
   }
 }
 
@@ -165,7 +204,13 @@
     @apply text-ink font-semibold;
   }
   & blockquote {
-    @apply border-accent bg-accent-soft rounded-r-xl border-l-4 px-5 py-4;
+    @apply border-accent-strong bg-accent-soft text-ink rounded-r-2xl border-l-4 px-6 py-5;
+  }
+  & table {
+    @apply rounded-xl;
+  }
+  & thead {
+    @apply bg-shell;
   }
   & table {
     @apply block w-full max-w-full border-collapse overflow-x-auto text-[0.95rem] sm:table;
@@ -181,5 +226,12 @@
   }
   & code {
     @apply bg-sand rounded px-1.5 py-0.5 text-[0.9em];
+  }
+}
+
+/* Guide articles: a larger lead paragraph, like a magazine dek. */
+@utility guide-body {
+  & > p:first-child {
+    @apply text-ink text-[1.25rem] leading-relaxed;
   }
 }

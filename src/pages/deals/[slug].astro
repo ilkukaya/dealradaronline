@@ -9,25 +9,13 @@ import Icon from '../../components/ui/Icon.astro';
 import AdSlot from '../../components/integrations/AdSlot.astro';
 import ShareLinks from '../../components/ui/ShareLinks.astro';
 import { ogImageFor } from '../../lib/og';
-import { getCategory, getOfferType } from '../../config/taxonomy';
+import { getCategory } from '../../config/taxonomy';
+import { site } from '../../config/site';
+import OutboundButton from '../../components/deals/OutboundButton.astro';
+import { programShortName, programStyle } from '../../config/styles';
 import { networks } from '../../lib/affiliate/networks';
-import {
-  BUILD_TIME,
-  getDealsWithPages,
-  getMerchantMap,
-  getRelatedDeals,
-  getRelatedGuidesForDeal,
-  isActive,
-  isDealIndexable,
-  type Deal,
-} from '../../lib/catalog';
-import {
-  STALE_AFTER_DAYS,
-  daysBetween,
-  formatDate,
-  formatDateTime,
-  getLifecycle,
-} from '../../lib/deal-utils';
+import { BUILD_TIME, getDealsWithPages, getMerchantMap, getRelatedDeals, getRelatedGuidesForDeal, isActive, isDealIndexable, type Deal } from '../../lib/catalog';
+import { STALE_AFTER_DAYS, daysBetween, formatDate, formatDateTime, getHeadline, getLifecycle } from '../../lib/deal-utils';
 
 export async function getStaticPaths() {
   const deals = await getDealsWithPages();
@@ -40,11 +28,12 @@ const merchantMap = await getMerchantMap();
 const merchant = merchantMap.get(d.merchant)!;
 const lifecycle = getLifecycle(d, BUILD_TIME);
 const active = isActive(deal);
-const type = getOfferType(d.offerType);
 const category = getCategory(d.category);
+const style = programStyle[d.offerType];
 const stale = daysBetween(d.lastVerified, BUILD_TIME) > STALE_AFTER_DAYS;
 const [related, guides] = await Promise.all([getRelatedDeals(deal), getRelatedGuidesForDeal(deal)]);
 const otherFromStore = (await getDealsWithPages()).filter((x) => x.data.merchant === d.merchant && x.id !== deal.id && isActive(x));
+const alternatives = related.filter((r) => r.data.merchant !== d.merchant);
 const paragraphs = d.editorialSummary.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 const sourceHost = new URL(d.sourceUrl).host.replace(/^www\./, '');
 
@@ -68,33 +57,26 @@ const metaDescription = `${d.description}`.slice(0, 158);
   modifiedTime={d.updatedAt ?? d.lastVerified}
   image={ogImageFor('deals', deal.id)}
 >
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-6">
-      <Breadcrumbs
-        items={[
-          { name: 'Deals', href: '/deals/' },
-          ...(category ? [{ name: category.name, href: `/categories/${category.slug}/` }] : []),
-          { name: d.title, href: `/deals/${deal.id}/` },
-        ]}
-      />
-    </div>
-  </div>
+  <div class="container-page pt-7 pb-28 lg:pb-14" data-expires={active ? d.endDate?.toISOString() : undefined}>
+    <Breadcrumbs
+      items={[
+        { name: 'Deals', href: '/deals/' },
+        { name: merchant.data.name, href: `/stores/${merchant.id}/` },
+        { name: d.title, href: `/deals/${deal.id}/` },
+      ]}
+    />
 
-  <div class="container-page py-8 sm:py-10" data-expires={active ? d.endDate?.toISOString() : undefined}>
     {
       d.fixture && (
-        <div class="bg-caution-soft text-caution mb-6 rounded-xl px-4 py-3 text-sm font-medium" role="note">
+        <div class="bg-caution-soft text-caution mt-6 rounded-xl px-4 py-3 text-sm font-medium" role="note">
           Development sample — this is not a real offer and is never published on the live site.
         </div>
       )
     }
-
     {
       !active && (
-        <div class="border-line-strong bg-sand mb-6 rounded-xl border px-5 py-4" role="status">
-          <p class="text-ink font-semibold">
-            {lifecycle === 'upcoming' ? 'This offer has not started yet.' : 'This offer has ended.'}
-          </p>
+        <div class="border-line-strong bg-sand mt-6 rounded-xl border px-5 py-4" role="status">
+          <p class="text-ink font-semibold">{lifecycle === 'upcoming' ? 'This offer has not started yet.' : 'This offer has ended.'}</p>
           <p class="text-ink-2 mt-1 text-sm">
             {lifecycle === 'expired' && d.endDate ? `It ended on ${formatDate(d.endDate)}. ` : ''}
             We keep this page for reference only. See <a href={`/stores/${merchant.id}/`} class="link">current {merchant.data.name} offers</a> or <a href="/deals/" class="link">all active deals</a>.
@@ -102,38 +84,45 @@ const metaDescription = `${d.description}`.slice(0, 158);
         </div>
       )
     }
-    <div class="border-line-strong bg-sand mb-6 rounded-xl border px-5 py-4" role="status" data-expired-notice hidden>
+    <div class="border-line-strong bg-sand mt-6 rounded-xl border px-5 py-4" role="status" data-expired-notice hidden>
       <p class="text-ink font-semibold">This offer appears to have ended.</p>
       <p class="text-ink-2 mt-1 text-sm">Its end date has passed since this page was last updated. See <a href="/deals/" class="link">active deals</a>.</p>
     </div>
 
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <article class="min-w-0">
-        <div class="flex items-center gap-3">
-          <Monogram name={merchant.data.name} />
-          <div>
-            <a href={`/stores/${merchant.id}/`} class="text-ink font-semibold hover:underline">{merchant.data.name}</a>
-            <p class="text-muted text-sm">
-              {type && <a href={`/discounts/${type.slug}/`} class="hover:text-ink hover:underline">{type.name}</a>}
-              {category && <span> · {category.name}</span>}
-            </p>
+    <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-8">
+      <div class="min-w-0 space-y-5">
+        <!-- Hero card -->
+        <article class="card relative overflow-hidden p-6 sm:p-9">
+          <svg aria-hidden="true" viewBox="0 0 200 200" class="pointer-events-none absolute -top-24 -right-24 h-72 w-72 opacity-[0.06]">
+            <circle cx="100" cy="100" r="96" fill="none" stroke="#0e1a35" stroke-width="1"></circle><circle cx="100" cy="100" r="64" fill="none" stroke="#0e1a35" stroke-width="1"></circle><circle cx="100" cy="100" r="32" fill="none" stroke="#0e1a35" stroke-width="1"></circle>
+          </svg>
+          <div class="relative flex flex-wrap items-center gap-3">
+            <Monogram name={merchant.data.name} tone="solid" />
+            <div class="min-w-0">
+              <p class="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                <a href={`/stores/${merchant.id}/`} class="text-ink font-semibold hover:underline">{merchant.data.name}</a>
+                {otherFromStore.length > 0 && <a href={`/stores/${merchant.id}/`} class="text-accent-deep text-sm font-semibold hover:underline">All {merchant.data.name} offers ({otherFromStore.length + 1}) →</a>}
+              </p>
+              <a href={`/discounts/${d.offerType}/`} class:list={['pill mt-1 no-underline', style.tint, style.text]}>
+                <Icon name={style.icon} class="h-3 w-3" />
+                {programShortName[d.offerType]}
+              </a>
+            </div>
           </div>
-        </div>
+          <h1 class="display relative mt-6 text-[2.2rem] leading-[1.06] font-semibold sm:text-[3.1rem]">{d.title}</h1>
+          <p class="text-ink-2 relative mt-5 text-lg leading-relaxed">{d.description}</p>
+          <ul class="border-line text-ink-2 relative mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t pt-5 text-sm">
+            <li class="flex items-center gap-1.5"><Icon name="check-circle" class="text-positive h-4 w-4" /> Last checked <time datetime={d.lastVerified.toISOString()}>{formatDateTime(d.lastVerified)}</time></li>
+            <li class="flex items-center gap-1.5"><Icon name="calendar" class="text-accent-strong h-4 w-4" /> {d.endDate ? `Ends ${formatDate(d.endDate)}` : 'No end date announced'}</li>
+            {category && <li class="flex items-center gap-1.5"><Icon name={category.icon} class="text-accent-strong h-4 w-4" /> <a href={`/categories/${category.slug}/`} class="hover:underline">{category.name}</a></li>}
+          </ul>
+        </article>
 
-        <h1 class="display mt-5 text-[2rem] leading-tight font-semibold sm:text-[2.5rem]">{d.title}</h1>
-        <p class="text-ink-2 mt-4 text-lg leading-relaxed">{d.description}</p>
-
-        <p class="text-muted mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-          <span class="inline-flex items-center gap-1.5"><Icon name="clock" class="h-4 w-4" /> Last checked <time datetime={d.lastVerified.toISOString()}>{formatDateTime(d.lastVerified)}</time></span>
-          {d.endDate && <span class="inline-flex items-center gap-1.5"><Icon name="calendar" class="h-4 w-4" /> Ends {formatDate(d.endDate)}</span>}
-          {!d.endDate && active && <span class="inline-flex items-center gap-1.5"><Icon name="calendar" class="h-4 w-4" /> No end date announced</span>}
-        </p>
-
-        <DealPriceCard deal={deal} merchant={merchant} active={active} placement="deal-top-mobile" class="mt-6 lg:hidden" />
+        <DealPriceCard deal={deal} merchant={merchant} active={active} placement="deal-top-mobile" class="lg:hidden" />
 
         {
           stale && active && (
-            <p class="bg-caution-soft text-caution mt-5 rounded-xl px-4 py-3 text-sm">
+            <p class="bg-caution-soft text-caution rounded-xl px-4 py-3 text-sm">
               We last checked this offer more than {STALE_AFTER_DAYS} days ago. Terms may have changed — confirm on {merchant.data.name}'s site before you buy.
             </p>
           )
@@ -141,21 +130,36 @@ const metaDescription = `${d.description}`.slice(0, 158);
 
         {
           d.eligibility && (
-            <section class="mt-10" aria-labelledby="who">
-              <h2 id="who" class="display text-2xl font-semibold">Who qualifies</h2>
-              <p class="text-ink-2 mt-3 leading-relaxed">{d.eligibility}</p>
+            <section class="card p-6 sm:p-8" aria-labelledby="who">
+              <header class="border-line flex items-center gap-3 border-b pb-4">
+                <span class="bg-shell text-ink flex h-10 w-10 items-center justify-center rounded-xl"><Icon name="users" class="h-5 w-5" /></span>
+                <div>
+                  <h2 id="who" class="display text-[1.6rem] leading-tight font-medium">Who qualifies</h2>
+                  <p class="text-muted text-sm">Eligibility as stated by {merchant.data.name}</p>
+                </div>
+              </header>
+              <div class="bg-shell text-ink-2 mt-5 flex gap-3 rounded-xl p-4 leading-relaxed">
+                <Icon name={style.icon} class={`mt-0.5 h-5 w-5 shrink-0 ${style.text}`} />
+                <p>{d.eligibility}</p>
+              </div>
             </section>
           )
         }
 
         {
           d.restrictions.length > 0 && (
-            <section class="mt-10" aria-labelledby="terms">
-              <h2 id="terms" class="display text-2xl font-semibold">Restrictions and fine print</h2>
-              <ul class="mt-4 space-y-3">
+            <section class="card p-6 sm:p-8" aria-labelledby="terms">
+              <header class="border-line flex items-center gap-3 border-b pb-4">
+                <span class="bg-accent-soft text-accent-deep flex h-10 w-10 items-center justify-center rounded-xl"><Icon name="list" class="h-5 w-5" /></span>
+                <div>
+                  <h2 id="terms" class="display text-[1.6rem] leading-tight font-medium">Restrictions and fine print</h2>
+                  <p class="text-muted text-sm">Read these before you sign up</p>
+                </div>
+              </header>
+              <ul class="mt-5 space-y-3">
                 {d.restrictions.map((r) => (
-                  <li class="text-ink-2 flex gap-3 leading-relaxed">
-                    <Icon name="info" class="text-accent-strong mt-1 h-4.5 w-4.5 shrink-0" />
+                  <li class="bg-shell text-ink-2 flex gap-3 rounded-xl p-4 leading-relaxed">
+                    <Icon name="info" class="text-accent-strong mt-0.5 h-5 w-5 shrink-0" />
                     <span>{r}</span>
                   </li>
                 ))}
@@ -164,76 +168,94 @@ const metaDescription = `${d.description}`.slice(0, 158);
           )
         }
 
-        <section class="mt-10" aria-labelledby="take">
-          <h2 id="take" class="display text-2xl font-semibold">Our take</h2>
-          <div class="prose-editorial mt-3">
-            {paragraphs.map((p) => <p>{p}</p>)}
+        <section class="card p-6 sm:p-8" aria-labelledby="take">
+          <header class="border-line flex items-center gap-3 border-b pb-4">
+            <span class="bg-ink flex h-10 w-10 items-center justify-center rounded-xl text-white"><Icon name="book" class="h-5 w-5" /></span>
+            <div>
+              <h2 id="take" class="display text-[1.6rem] leading-tight font-medium">Our take</h2>
+              <p class="text-muted text-sm">From the {site.name} editors</p>
+            </div>
+          </header>
+          <div class="border-accent mt-5 border-l-[3px] pl-5">
+            <div class="prose-editorial">{paragraphs.map((p) => <p>{p}</p>)}</div>
           </div>
+          <div class="border-line mt-6 border-t pt-5"><ShareLinks path={`/deals/${deal.id}/`} title={d.title} pinImage={ogImageFor('deals', deal.id)} /></div>
         </section>
 
-        <div class="mt-8"><ShareLinks path={`/deals/${deal.id}/`} title={d.title} pinImage={ogImageFor('deals', deal.id)} /></div>
-
-        <section class="bg-navy-soft/60 mt-10 rounded-2xl p-5 sm:p-6" aria-labelledby="checked">
-          <h2 id="checked" class="text-ink flex items-center gap-2 font-semibold"><Icon name="shield" class="h-5 w-5" /> How we checked this offer</h2>
-          <p class="text-ink-2 mt-2 text-[0.95rem] leading-relaxed">{verificationText[d.verificationMethod]}</p>
-          <dl class="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-            <div><dt class="text-muted">Source</dt><dd><a href={d.sourceUrl} rel="nofollow noopener" target="_blank" class="link break-all">{sourceHost}</a></dd></div>
-            <div><dt class="text-muted">Last checked</dt><dd class="text-ink">{formatDateTime(d.lastVerified)}</dd></div>
-            <div><dt class="text-muted">Added</dt><dd class="text-ink">{formatDate(d.publishedAt)}</dd></div>
-            {d.startDate && <div><dt class="text-muted">Starts</dt><dd class="text-ink">{formatDate(d.startDate)}</dd></div>}
+        <section class="bg-navy-soft rounded-[var(--radius-card)] p-6 sm:p-8" aria-labelledby="checked">
+          <h2 id="checked" class="text-ink flex items-center gap-2 text-lg font-semibold"><Icon name="shield" class="h-5 w-5" /> How we checked this offer</h2>
+          <p class="text-ink-2 mt-2 leading-relaxed">{verificationText[d.verificationMethod]}</p>
+          <dl class="mt-5 grid gap-3 text-sm sm:grid-cols-3">
+            <div class="rounded-xl bg-white/70 p-3"><dt class="text-muted text-xs font-semibold tracking-wide uppercase">Source</dt><dd class="mt-1"><a href={d.sourceUrl} rel="nofollow noopener" target="_blank" class="link break-all">{sourceHost}</a></dd></div>
+            <div class="rounded-xl bg-white/70 p-3"><dt class="text-muted text-xs font-semibold tracking-wide uppercase">Last checked</dt><dd class="text-ink mt-1">{formatDateTime(d.lastVerified)}</dd></div>
+            <div class="rounded-xl bg-white/70 p-3"><dt class="text-muted text-xs font-semibold tracking-wide uppercase">Added</dt><dd class="text-ink mt-1">{formatDate(d.publishedAt)}</dd></div>
           </dl>
           <p class="text-muted mt-4 text-xs leading-relaxed">
-            Stores can change prices and terms at any time. The store's checkout page is the final word. Spotted a problem? <a href="/contact/?topic=deal-problem" class="link">Tell us</a>.
+            Stores can change prices and terms at any time; the store's checkout page is the final word. Spotted a problem? <a href="/contact/?topic=deal-problem" class="link">Tell us</a>.
           </p>
         </section>
+      </div>
 
+      <!-- Sidebar -->
+      <aside class="space-y-5 lg:sticky lg:top-36 lg:self-start" aria-label="Offer summary">
+        <DealPriceCard deal={deal} merchant={merchant} active={active} placement="deal-sidebar" class="hidden lg:block" />
         {
-          guides.length > 0 && (
-            <section class="mt-12" aria-labelledby="read">
-              <h2 id="read" class="display text-2xl font-semibold">Before you buy</h2>
-              <div class="mt-4 grid gap-4 sm:grid-cols-2">
-                {guides.map((g) => <GuideCard guide={g} />)}
-              </div>
-            </section>
+          otherFromStore.length > 0 && (
+            <div class="card p-5">
+              <p class="display text-ink text-lg font-semibold">More from {merchant.data.name}</p>
+              <ul class="mt-3 space-y-2.5">
+                {otherFromStore.slice(0, 3).map((x) => (
+                  <li>
+                    <a href={`/deals/${x.id}/`} class="bg-shell hover:bg-sand block rounded-xl p-3 no-underline">
+                      <span class="flex items-start justify-between gap-3">
+                        <span class="text-ink text-sm leading-snug font-semibold">{x.data.title}</span>
+                        <span class="text-ink tabular shrink-0 text-sm font-bold">{getHeadline(x.data).value}</span>
+                      </span>
+                      <span class="text-accent-deep mt-1 block text-xs font-semibold">View offer →</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )
         }
-      </article>
-
-      <aside class="lg:sticky lg:top-24 lg:self-start" aria-label="Offer summary">
-        <DealPriceCard deal={deal} merchant={merchant} active={active} placement="deal-sidebar" class="hidden lg:block" />
-
-        <dl class="card mt-4 divide-line divide-y px-5 text-sm">
-          <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Store</dt><dd><a href={`/stores/${merchant.id}/`} class="text-ink font-medium hover:underline">{merchant.data.name}</a></dd></div>
-          {type && <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Type</dt><dd class="text-ink text-right">{type.name}</dd></div>}
-          {category && <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Category</dt><dd class="text-right"><a href={`/categories/${category.slug}/`} class="text-ink hover:underline">{category.name}</a></dd></div>}
-          <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Ends</dt><dd class="text-ink text-right">{d.endDate ? formatDate(d.endDate) : 'Not announced'}</dd></div>
-          <div class="flex justify-between gap-4 py-3"><dt class="text-muted">Last checked</dt><dd class="text-ink text-right">{formatDate(d.lastVerified)}</dd></div>
-        </dl>
       </aside>
     </div>
 
     <AdSlot id="deal-bottom" />
 
     {
-      otherFromStore.length > 0 && (
-        <section class="mt-14" aria-labelledby="more-store">
-          <h2 id="more-store" class="display text-2xl font-semibold">More from {merchant.data.name}</h2>
-          <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {otherFromStore.slice(0, 3).map((x) => <DealCard deal={x} merchant={merchant} />)}
+      alternatives.length > 0 && (
+        <section class="mt-14" aria-labelledby="alternatives">
+          <h2 id="alternatives" class="display text-[2rem] font-semibold">Similar offers</h2>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {alternatives.map((x) => <DealCard deal={x} merchant={merchantMap.get(x.data.merchant)!} />)}
           </div>
         </section>
       )
     }
 
     {
-      related.filter((r) => r.data.merchant !== d.merchant).length > 0 && (
-        <section class="mt-14" aria-labelledby="alternatives">
-          <h2 id="alternatives" class="display text-2xl font-semibold">Similar offers</h2>
-          <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {related.filter((r) => r.data.merchant !== d.merchant).map((x) => <DealCard deal={x} merchant={merchantMap.get(x.data.merchant)!} />)}
+      guides.length > 0 && (
+        <section class="mt-14" aria-labelledby="read">
+          <h2 id="read" class="display text-[2rem] font-semibold">Before you buy</h2>
+          <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {guides.map((g) => <GuideCard guide={g} />)}
           </div>
         </section>
       )
     }
   </div>
+
+  {
+    active && (
+      <div class="border-line fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t bg-white/95 px-4 py-3 shadow-[0_-4px_16px_rgba(14,26,53,0.08)] backdrop-blur lg:hidden" data-active-only>
+        <span class="min-w-0">
+          <span class="display tabular text-ink block text-xl leading-none font-semibold">{getHeadline(d).value}</span>
+          {getHeadline(d).note && <span class="text-muted block truncate text-xs">{getHeadline(d).note}</span>}
+        </span>
+        <OutboundButton deal={deal} merchant={merchant} placement="deal-sticky-mobile" class="!min-h-10 !w-auto shrink-0 !px-4 !text-sm" />
+      </div>
+    )
+  }
 </BaseLayout>

@@ -14,14 +14,17 @@ tips:
   - Price matches have exclusions and Target does not accept screenshots; bring up the competitor's live listing.
 facts:
   - label: Free shipping
+    short: Free shipping over $35
     value: Orders over $35 (before tax, after promotional discounts) or paid with a Target Circle Card ship free. Other orders pay a flat $5.99 shipping fee.
     sourceUrl: https://www.target.com/help/article/000055608
     checkedAt: 2026-10-16
   - label: Standard returns
+    short: 90-day returns on most items
     value: Most unopened items in new condition can be returned within 90 days. Electronics and entertainment have a 30-day window; Apple, Beats, and mobile phones have 14 days.
     sourceUrl: https://www.target.com/help/articles/returns-exchanges/returns
     checkedAt: 2026-10-16
   - label: Price match
+    short: Price match within 14 days
     value: Target matches the price of identical items at the time of purchase or within 14 days after purchase. Exclusions apply and screenshots are not accepted.
     sourceUrl: https://www.target.com/help/articles/policies-guidelines/price-match-guarantee
     checkedAt: 2026-10-16

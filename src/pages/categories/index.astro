@@ -8,21 +8,22 @@ const cats = await getCategoriesWithContent();
 ---
 
 <BaseLayout title="Shop Deals by Category" description="Browse active deals by category — tech, home, fashion, digital subscriptions, memberships and more — with restrictions and last-checked dates." canonicalPath="/categories/">
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-8 sm:py-10">
-      <Breadcrumbs items={[{ name: 'Categories', href: '/categories/' }]} />
-      <h1 class="display mt-4 text-4xl font-semibold">Categories</h1>
-      <p class="text-ink-2 mt-3 max-w-2xl text-lg">Categories appear here once they have at least one active offer.</p>
-    </div>
+  <div class="container-page pt-7">
+    <Breadcrumbs items={[{ name: 'Categories', href: '/categories/' }]} />
+    <p class="eyebrow mt-6">Categories</p>
+    <h1 class="display mt-2 text-[2.75rem] leading-none font-semibold sm:text-[3.5rem]">Shop by category</h1>
+    <p class="text-ink-2 mt-4 max-w-2xl text-lg">Categories appear here once they have at least one active offer.</p>
   </div>
   <div class="container-page grid gap-4 py-10 sm:grid-cols-2 lg:grid-cols-3">
     {
       cats.map((c) => (
-        <a href={`/categories/${c.slug}/`} class="card group block p-6 no-underline hover:shadow-[var(--shadow-lift)]" data-track="Category Select" data-track-props={JSON.stringify({ category: c.slug, placement: 'categories-index' })}>
-          <span class="bg-navy-soft text-ink flex h-11 w-11 items-center justify-center rounded-xl"><Icon name={c.icon} class="h-5.5 w-5.5" /></span>
-          <h2 class="text-ink mt-4 text-lg font-semibold group-hover:underline">{c.name}</h2>
-          <p class="text-ink-2 mt-1.5 text-sm leading-relaxed">{c.description}</p>
-          <p class="text-accent-strong mt-3 text-sm font-semibold">{c.deals.length} active {c.deals.length === 1 ? 'offer' : 'offers'}</p>
+        <a href={`/categories/${c.slug}/`} class="card card-hover group flex flex-col p-6 no-underline" data-track="Category Select" data-track-props={JSON.stringify({ category: c.slug, placement: 'categories-index' })}>
+          <span class="flex items-center justify-between">
+            <span class="bg-navy-soft text-ink flex h-12 w-12 items-center justify-center rounded-2xl"><Icon name={c.icon} class="h-6 w-6" /></span>
+            <span class="pill bg-positive-soft text-positive">{c.deals.length} active</span>
+          </span>
+          <h2 class="display text-ink mt-5 text-[1.6rem] leading-tight font-medium group-hover:underline decoration-1 underline-offset-4">{c.name}</h2>
+          <p class="text-ink-2 mt-2 text-sm leading-relaxed">{c.description}</p>
         </a>
       ))
     }

@@ -20,6 +20,8 @@ const guides = category.guides.length ? category.guides : (await getGuides()).sl
   deals={category.deals}
   guides={guides}
   eyebrow="Category"
+  icon={category.icon}
+  tint="bg-navy-soft"
   noindex={!isCategoryIndexable(category)}
-  siblings={all.map((c) => ({ href: `/categories/${c.slug}/`, label: c.name }))}
+  siblings={all.map((c) => ({ href: `/categories/${c.slug}/`, label: c.name, icon: c.icon }))}
 />

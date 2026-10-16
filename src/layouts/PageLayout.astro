@@ -18,16 +18,16 @@ const { title, metaTitle, description, dek, updated, path, noindex = false, wide
 ---
 
 <BaseLayout title={metaTitle ?? title} description={description} canonicalPath={path} noindex={noindex}>
-  <div class="border-line border-b bg-white">
-    <div class="container-page py-8 sm:py-12">
+  <div class="bg-shell">
+    <div class="container-page pt-7 pb-12">
       <Breadcrumbs items={[{ name: title, href: path }]} />
-      <h1 class="display mt-5 max-w-3xl text-4xl leading-tight font-semibold sm:text-5xl">{title}</h1>
+      <h1 class="display mt-6 max-w-3xl text-[2.6rem] leading-[1.05] font-semibold sm:text-[3.4rem]">{title}</h1>
       {dek && <p class="text-ink-2 mt-4 max-w-2xl text-xl leading-relaxed">{dek}</p>}
-      {updated && <p class="text-muted mt-4 text-sm">Last updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time></p>}
+      {updated && <p class="text-muted mt-5 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm">Last updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time></p>}
     </div>
   </div>
   <div class="container-page py-10">
-    <div class:list={['prose-editorial', wide ? 'max-w-4xl' : 'max-w-3xl']}>
+    <div class:list={['card prose-editorial p-6 sm:p-10', wide ? 'max-w-4xl' : 'max-w-3xl']}>
       <slot />
     </div>
     <slot name="after" />
